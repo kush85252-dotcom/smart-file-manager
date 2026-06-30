@@ -1,0 +1,82 @@
+{
+    "appName": "Smart File Manager",
+
+    "version": "1.0.0",
+
+    "app_settings": {
+        "auto_start": false,
+        "auto_mode": false,
+        "theme": "dark",
+        "minimize_to_tray": true,
+        "show_notifications": true,
+        "start_maximized": false,
+        "confirm_before_organize": true,
+        "scan_hidden_files": false
+    },
+
+    "folders": {
+        "downloads": "C:\\Users\\kush\\Downloads",
+        "desktop": "C:\\Users\\kush\\Desktop",
+        "documents": "C:\\Users\\kush\\Documents",
+        "pictures": "C:\\Users\\kush\\Pictures",
+        "videos": "C:\\Users\\kush\\Videos",
+        "music": "C:\\Users\\kush\\Music"
+    },
+
+    "organizer_settings": {
+        "recursive_scan": false,
+        "create_category_folders": true,
+        "keep_file_history": true,
+        "avoid_duplicates": true,
+        "rename_conflicts": true,
+        "move_unknown_files": true
+    },
+
+    "categories": {
+        "Documents": true,
+        "Images": true,
+        "Videos": true,
+        "Audio": true,
+        "Archives": true,
+        "Applications": true,
+        "Android APKs": true,
+        "Scripts": true,
+        "Code": true,
+        "Others": true
+    },
+
+    "shortcuts": [
+        {
+            "name": "Downloads",
+            "path": "C:\\Users\\kush\\Downloads"
+        },
+        {
+            "name": "Desktop",
+            "path": "C:\\Users\\kush\\Desktop"
+        },
+        {
+            "name": "Documents",
+            "path": "C:\\Users\\kush\\Documents"
+        }
+    ],
+
+    "ui": {
+        "window_width": 1280,
+        "window_height": 800,
+        "show_preview_on_start": false,
+        "show_log_tab": true,
+        "show_report_tab": true
+    },
+
+    "logs": {
+        "enabled": true,
+        "save_logs": true,
+        "max_log_files": 10
+    },
+
+    "backup": {
+        "enabled": false,
+        "backup_before_move": false,
+        "backup_folder": ""
+    }
+}
