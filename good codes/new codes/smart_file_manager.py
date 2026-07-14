@@ -89,7 +89,7 @@ print(settings)
 
 theme = settings.get("app_settings", {}).get("theme", "dark")
 print("Theme:", theme)
-json_path = r"C:\Users\kush\Desktop\good codes\new codes\dist\startup.json"
+json_path = r"C:\Users\kush\OneDrive\Documents\smart_file_manager\startup.json"
 
 print("Exists:", os.path.exists(json_path))
 print("Folder exists:", os.path.exists(os.path.dirname(json_path)))
