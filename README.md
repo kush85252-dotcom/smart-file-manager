@@ -33,4 +33,4 @@ Currently under active development.
 
 ## Author
 
-Luko
+kush
