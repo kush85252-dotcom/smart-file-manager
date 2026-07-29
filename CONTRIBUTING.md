@@ -1,72 +1,64 @@
-# Security Policy
+# Contributing to LUKOFORGE
 
-## Supported Versions
+Thank you for your interest in contributing to LUKOFORGE!
 
-Security fixes are currently provided for the latest version of Smart File Manager.
+We appreciate developers, creators, and contributors who want to help improve our projects.
 
-| Version        | Supported |
-| -------------- | --------- |
-| Latest         | ✅ Yes     |
-| Older versions | ❌ No      |
+## 🏭 About LUKOFORGE
 
-## Reporting a Vulnerability
+LUKOFORGE is an independent studio focused on creating software, games, and creative digital projects.
 
-If you discover a security vulnerability in Smart File Manager, please **do not publicly disclose it through GitHub Issues**.
+Our goal is to build useful tools, creative experiences, and innovative projects.
 
-Instead, report it privately using GitHub's security reporting features, if enabled for this repository.
+## 🤝 How to Contribute
 
-Please include:
+1. Fork the repository
+2. Create a new branch for your changes
+3. Make your improvements
+4. Test your changes
+5. Submit a Pull Request
 
-* A clear description of the vulnerability
-* Steps to reproduce the issue
-* The expected and actual behavior
-* The potential security impact
-* Relevant logs, screenshots, or code snippets
-* A possible fix, if known
+## 🐛 Reporting Bugs
 
-Please allow reasonable time for the issue to be investigated and fixed before publicly disclosing it.
+Found a bug?
 
-## Security-Sensitive Areas
+Please create a GitHub Issue using the **Bug Report** template and include:
+- A clear description of the problem
+- Steps to reproduce it
+- Screenshots or logs if available
+- Your system information
 
-Smart File Manager interacts with the local filesystem. Security reports involving the following areas are especially important:
+## ✨ Suggesting Features
 
-* Unauthorized file access or modification
-* Path traversal vulnerabilities
-* Unsafe file or folder operations
-* Arbitrary file deletion or movement
-* Malicious file handling
-* Configuration or settings manipulation
-* Unsafe automatic file organization
-* File watcher vulnerabilities
-* Exposure of sensitive filesystem information
-* Code execution caused by malicious input
+Have an idea?
 
-## What Is Not a Security Vulnerability?
+Create a **Feature Request** issue and explain:
+- The feature idea
+- Why it would be useful
+- How it could improve the project
 
-The following should generally be reported through normal GitHub Issues:
+## 📌 Contribution Guidelines
 
-* UI bugs
-* Visual problems
-* Performance issues
-* Feature requests
-* Normal crashes without a security impact
-* Incorrect file categorization
-* General usability problems
+- Keep code clean and readable
+- Follow existing project structure
+- Add comments when necessary
+- Test your changes before submitting
+- Be respectful to other contributors
 
-## Response Process
+## 🔒 Security Policy
 
-Security reports will be reviewed and investigated as soon as reasonably possible.
+If you discover a security vulnerability, please do not create a public issue.
 
-If a vulnerability is confirmed, the project will work toward developing and releasing an appropriate fix.
+Report security problems privately so they can be reviewed and fixed safely.
 
-Depending on the severity of the issue, affected users may be notified through the repository's release notes or other project announcements.
+## 📄 Documentation
 
-## Responsible Disclosure
+Good documentation helps everyone.
 
-Please avoid publicly posting exploit code, proof-of-concept attacks, or detailed instructions for exploiting an unfixed vulnerability.
+If you find incorrect, missing, or unclear information, please submit a documentation issue.
 
-Responsible disclosure helps protect users while the issue is being investigated and resolved.
+## 💙 Thank You
 
-## Thank You
+Every contribution helps LUKOFORGE grow.
 
-Thank you for helping improve the security and reliability of Smart File Manager. 🔐
+Thank you for supporting our projects!
