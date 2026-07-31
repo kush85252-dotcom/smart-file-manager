@@ -14,14 +14,14 @@
         "scan_hidden_files": false
     },
 
-    "folders": {
-        "downloads": "C:\\Users\\kush\\Downloads",
-        "desktop": "C:\\Users\\kush\\Desktop",
-        "documents": "C:\\Users\\kush\\Documents",
-        "pictures": "C:\\Users\\kush\\Pictures",
-        "videos": "C:\\Users\\kush\\Videos",
-        "music": "C:\\Users\\kush\\Music"
-    },
+  "folders": {
+    "downloads": "Downloads",
+    "desktop": "Desktop",
+    "documents": "Documents",
+    "pictures": "Pictures",
+    "videos": "Videos",
+    "music": "Music"
+},
 
     "organizer_settings": {
         "recursive_scan": false,
@@ -48,15 +48,15 @@
     "shortcuts": [
         {
             "name": "Downloads",
-            "path": "C:\\Users\\kush\\Downloads"
+            "path": "C:\\Users\\admin\\Downloads"
         },
         {
             "name": "Desktop",
-            "path": "C:\\Users\\kush\\Desktop"
+            "path": "C:\\Users\\admin\\Desktop"
         },
         {
             "name": "Documents",
-            "path": "C:\\Users\\kush\\Documents"
+            "path": "C:\\Users\\admin\\Documents"
         }
     ],
 

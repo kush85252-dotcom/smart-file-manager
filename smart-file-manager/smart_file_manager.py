@@ -20,25 +20,30 @@ import os
 import tkinter as tk
 from tkinter import messagebox
 import sys
-
 with open("startup.json", "r") as f:
     settings = json.load(f)
 print("JSON LOADED")
 print(settings["app_settings"]["auto_mode"])
 if settings["app_settings"]["auto_mode"]:
-    current_folder = settings["folders"]["downloads"]
+    current_folder = get_user_folder(settings["folders"]["downloads"])
     print("AUTO MODE:", current_folder)
 # Load config
 
 
-with open("startup.json", "r") as f:
+from pathlib import Path
+import json
+
+APP_DIR = Path(__file__).resolve().parent
+STARTUP_FILE = APP_DIR / "startup.json"
+
+with STARTUP_FILE.open("r", encoding="utf-8") as f:
     settings = json.load(f)
+
 print("TEST JSON")
 app = settings["app_settings"]
 folders = settings["folders"]
-
 if app["auto_start"]:
-    print("Smart File Manager starting automatically 😎")
+    print("Smart File Manager starting automatically ")
 
 if app["auto_mode"]:
     current_folder = folders["downloads"]
@@ -56,13 +61,17 @@ def get_base_path():
     if getattr(sys, 'frozen', False):
         return os.path.dirname(sys.executable)
     return os.path.dirname(os.path.abspath(__file__))
+from pathlib import Path
+
+def get_user_folder(folder_name):
+    return Path.home() / folder_name
 
 base_path = get_base_path()
 json_path = os.path.join(base_path, "startup.json")
 
 print("LOADING JSON FROM:", json_path)
 from pathlib import Path
-files = os.listdir(settings["folders"]["downloads"])
+files = os.listdir(get_user_folder(settings["folders"]["downloads"]))
 
 print("Folder added:", settings["folders"]["downloads"])
 print(files)
@@ -89,7 +98,7 @@ print(settings)
 
 theme = settings.get("app_settings", {}).get("theme", "dark")
 print("Theme:", theme)
-json_path = r"C:\Users\kush\OneDrive\Documents\smart_file_manager\startup.json"
+json_path = r"D:\python projects\smart-file-manager\smart-file-manager\startup.json"
 
 print("Exists:", os.path.exists(json_path))
 print("Folder exists:", os.path.exists(os.path.dirname(json_path)))
@@ -961,7 +970,7 @@ class MainWindow(QMainWindow):
         self._selected_folders: list[Path] = []
         self._organizer_worker: OrganizerWorker | None = None
         self._preview_scanner: PreviewScanner | None = None
-        self._observer: Observer | None = None  # watchdog observer
+        self._observer: observer| None = None  # watchdog observer
         self._watcher: FolderWatcher | None = None  # our event handler
         self._auto_mode_active = False
 
@@ -1258,9 +1267,7 @@ class MainWindow(QMainWindow):
         if not folder_str:
             return  # User cancelled
 
-        folder = Path(folder_str)
-
-        # Avoid duplicates
+        folder = Path(folder_str)      # Avoid duplicates
         if folder in self._selected_folders:
             self._status_bar.showMessage(f"Folder already added: {folder}")
             return
