@@ -1,19 +1,58 @@
 # Changelog
 
-All notable changes to **Smart File Manager** will be documented in this file.
+All notable changes to this project will be documented in this file.
 
-## [1.0.0] - Initial Release
+---
+
+## [Unreleased]
 
 ### Added
+- Folder persistence system (planned)
+- Developer Companion system (planned)
+- Daily quest notifications (planned)
+- Commit reminder (planned)
+- Push reminder (planned)
+- Coding streak tracker (planned)
 
-* Initial release of Smart File Manager.
-* Modern desktop interface built with PyQt6.
-* Automatic file organization by file type.
-* Real-time folder monitoring using Watchdog.
-* Safe file deletion using Send2Trash.
-* GitHub Discussions with a welcome post.
-* Security Policy (`SECURITY.md`).
-* Contribution Guidelines (`CONTRIBUTING.md`).
-* Requirements & Installation Guide (`REQUIREMENTS.md`).
-* Repository topics for better discoverability.
-* First public project showcase video.
+### Changed
+- Improve configuration management
+- Improve settings loading
+- Better startup initialization
+
+### Fixed
+- Folder persistence bug
+- Remaining hardcoded paths
+- UI refresh issues
+
+---
+
+## [1.1] - 2026-08-03
+
+### Added
+- GitHub Actions (Continuous Integration)
+- Automatic Python syntax checking on every push
+- Improved project structure
+
+### Changed
+- Improved configuration portability
+- Removed hardcoded development paths
+- Cleaner JSON configuration
+
+### Fixed
+- Hardcoded Python paths
+- Hardcoded JSON paths
+- GitHub workflow configuration
+
+---
+
+## [1.0]
+
+### Added
+- Initial release
+- File organization
+- Preview mode
+- Auto mode
+- Category based organization
+- Logging system
+- Configuration system
+- Backup settings
