@@ -1,0 +1,82 @@
+{
+    "appName": "Smart File Manager",
+
+    "version": "1.0.0",
+
+    "app_settings": {
+        "auto_start": false,
+        "auto_mode": false,
+        "theme": "dark",
+        "minimize_to_tray": true,
+        "show_notifications": true,
+        "start_maximized": false,
+        "confirm_before_organize": true,
+        "scan_hidden_files": false
+    },
+
+  "folders": {
+    "downloads": "Downloads",
+    "desktop": "Desktop",
+    "documents": "Documents",
+    "pictures": "Pictures",
+    "videos": "Videos",
+    "music": "Music"
+},
+
+    "organizer_settings": {
+        "recursive_scan": false,
+        "create_category_folders": true,
+        "keep_file_history": true,
+        "avoid_duplicates": true,
+        "rename_conflicts": true,
+        "move_unknown_files": true
+    },
+
+    "categories": {
+        "Documents": true,
+        "Images": true,
+        "Videos": true,
+        "Audio": true,
+        "Archives": true,
+        "Applications": true,
+        "Android APKs": true,
+        "Scripts": true,
+        "Code": true,
+        "Others": true
+    },
+
+    "shortcuts": [
+        {
+            "name": "Downloads",
+            "path": "C:\\Users\\admin\\Downloads"
+        },
+        {
+            "name": "Desktop",
+            "path": "C:\\Users\\admin\\Desktop"
+        },
+        {
+            "name": "Documents",
+            "path": "C:\\Users\\admin\\Documents"
+        }
+    ],
+
+    "ui": {
+        "window_width": 1280,
+        "window_height": 800,
+        "show_preview_on_start": false,
+        "show_log_tab": true,
+        "show_report_tab": true
+    },
+
+    "logs": {
+        "enabled": true,
+        "save_logs": true,
+        "max_log_files": 10
+    },
+
+    "backup": {
+        "enabled": false,
+        "backup_before_move": false,
+        "backup_folder": ""
+    }
+}

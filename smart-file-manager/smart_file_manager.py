@@ -8,7 +8,7 @@ Features:
 - Preview files before moving them
 - Organize into Documents, Images, Videos, Audio, Archives,
   Applications, Android APKs, Scripts, Code, Others
-- Auto Mode using watchdog to monitor folders in real time
+- Auto Mode using watchdog to monitor folders in real time validate
 - Live status log and move report
 - Safe error handling — never crashes on bad files
 
@@ -20,13 +20,11 @@ import os
 import tkinter as tk
 from tkinter import messagebox
 import sys
-with open("startup.json", "r") as f:
-    settings = json.load(f)
-print("JSON LOADED")
-print(settings["app_settings"]["auto_mode"])
-if settings["app_settings"]["auto_mode"]:
-    current_folder = get_user_folder(settings["folders"]["downloads"])
-    print("AUTO MODE:", current_folder)
+from pathlib import Path
+import sys
+
+BASE_DIR = Path(sys.executable).parent if getattr(sys, "frozen", False) else Path(__file__).resolve().parent
+
 # Load config
 
 
@@ -75,7 +73,7 @@ files = os.listdir(get_user_folder(settings["folders"]["downloads"]))
 
 print("Folder added:", settings["folders"]["downloads"])
 print(files)
-SETTINGS_PATH = Path("settings.json")
+SETTINGS_PATH = Path("startup.json")
 
 def load_settings():
     if SETTINGS_PATH.exists():
@@ -86,11 +84,21 @@ def load_settings():
 
 
 def save_settings(settings):
+    print("Saving to:", SETTINGS_PATH)
+    print("selected_folders =", settings.get("selected_folders"))
+
     with open(SETTINGS_PATH, "w") as file:
         json.dump(settings, file, indent=4)
 
 
 settings = load_settings()
+def save_settings(settings):
+    print("Saving:", settings)
+
+    with open(SETTINGS_PATH, "w", encoding="utf-8") as file:
+        json.dump(settings, file, indent=4)
+
+    print("Reloaded:", load_settings())
 
 
 print("SETTINGS LOADED:")
@@ -980,7 +988,8 @@ class MainWindow(QMainWindow):
 
         self._build_ui()
         self._set_initial_state()
-
+        
+        
     # ── UI Construction ──────────────────────────────────────────────────────
 
     def _build_ui(self):
@@ -1238,7 +1247,10 @@ class MainWindow(QMainWindow):
         self.btn_start_auto.setEnabled(False)
 
     def _refresh_button_states(self):
+
         """Enable / disable buttons based on current application state."""
+        print("Selected folders:", self._selected_folders)
+        print("Has folders:", has_folders)
         has_folders = bool(self._selected_folders)
         is_busy = (
             self._organizer_worker is not None and self._organizer_worker.isRunning()
@@ -1258,6 +1270,7 @@ class MainWindow(QMainWindow):
     # ── Folder Management ────────────────────────────────────────────────────
 
     def _add_folders(self):
+        
 
         """Open a dialog to choose one folder; can call multiple times."""
         
@@ -1273,6 +1286,12 @@ class MainWindow(QMainWindow):
             return
 
         self._selected_folders.append(folder)
+        settings["selected_folders"] = [
+    str(p) for p in self._selected_folders
+]
+        save_settings(settings)
+        print(settings["selected_folders"])
+        print("Saved to:", SETTINGS_PATH)
 
         # Show only the folder name in the list; full path in tooltip
         item = QListWidgetItem(folder.name)

@@ -14,8 +14,8 @@ Types of import:
 IMPORTANT: Do NOT post this list to the issue-tracker. Use it as a basis for
             tracking down the missing module yourself. Thanks!
 
-missing module named pyimod02_importers - imported by C:\Users\kush\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\PyInstaller\hooks\rthooks\pyi_rth_pkgutil.py (delayed)
-missing module named 'collections.abc' - imported by _colorize (top-level), typing (top-level), traceback (top-level), logging (top-level), selectors (top-level), http.client (top-level), importlib.resources.readers (top-level), inspect (top-level), tracemalloc (top-level), watchdog.utils.patterns (conditional), watchdog.events (conditional), watchdog.observers.inotify_c (conditional), watchdog.utils.dirsnapshot (conditional), watchdog.observers.kqueue (conditional), watchdog.observers.polling (conditional)
+missing module named pyimod02_importers - imported by C:\Users\Admin\AppData\Local\Programs\Python\Python314\Lib\site-packages\PyInstaller\hooks\rthooks\pyi_rth_pkgutil.py (delayed)
+missing module named 'collections.abc' - imported by tracemalloc (top-level), typing (top-level), traceback (top-level), _colorize (top-level), logging (top-level), selectors (top-level), http.client (top-level), importlib.resources.readers (top-level), inspect (top-level), watchdog.utils.patterns (conditional), watchdog.events (conditional), watchdog.observers.inotify_c (conditional), watchdog.utils.dirsnapshot (conditional), watchdog.observers.kqueue (conditional), watchdog.observers.polling (conditional)
 missing module named posix - imported by posixpath (optional), shutil (conditional), importlib._bootstrap_external (conditional), pathlib._os (optional), os (conditional, optional)
 missing module named resource - imported by posix (top-level)
 excluded module named _frozen_importlib - imported by importlib (optional), importlib.abc (optional), zipimport (top-level)

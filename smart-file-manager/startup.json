@@ -1,8 +1,6 @@
 {
     "appName": "Smart File Manager",
-
-    "version": "1.0.0",
-
+    "version": "1.1",
     "app_settings": {
         "auto_start": false,
         "auto_mode": false,
@@ -13,16 +11,14 @@
         "confirm_before_organize": true,
         "scan_hidden_files": false
     },
-
-  "folders": {
-    "downloads": "Downloads",
-    "desktop": "Desktop",
-    "documents": "Documents",
-    "pictures": "Pictures",
-    "videos": "Videos",
-    "music": "Music"
-},
-
+    "folders": {
+        "downloads": "Downloads",
+        "desktop": "Desktop",
+        "documents": "Documents",
+        "pictures": "Pictures",
+        "videos": "Videos",
+        "music": "Music"
+    },
     "organizer_settings": {
         "recursive_scan": false,
         "create_category_folders": true,
@@ -31,7 +27,6 @@
         "rename_conflicts": true,
         "move_unknown_files": true
     },
-
     "categories": {
         "Documents": true,
         "Images": true,
@@ -44,22 +39,23 @@
         "Code": true,
         "Others": true
     },
-
+    "selected_folders": [
+        ""
+    ],
     "shortcuts": [
         {
             "name": "Downloads",
-            "path": "C:\\Users\\admin\\Downloads"
+            "path": ""
         },
         {
             "name": "Desktop",
-            "path": "C:\\Users\\admin\\Desktop"
+            "path": ""
         },
         {
             "name": "Documents",
-            "path": "C:\\Users\\admin\\Documents"
+            "path": ""
         }
     ],
-
     "ui": {
         "window_width": 1280,
         "window_height": 800,
@@ -67,13 +63,11 @@
         "show_log_tab": true,
         "show_report_tab": true
     },
-
     "logs": {
         "enabled": true,
         "save_logs": true,
         "max_log_files": 10
     },
-
     "backup": {
         "enabled": false,
         "backup_before_move": false,
