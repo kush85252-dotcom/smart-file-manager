@@ -1,0 +1,14 @@
+{
+    "app_settings": {
+        "theme": "dark",
+        "auto_start": false,
+        "auto_mode": false
+    },
+    "folders": {
+        "downloads": "Downloads",
+        "desktop": "Desktop"
+    },
+    "selected_folders": [
+        "C:\\Users\\Admin\\3D Objects"
+    ]
+}
