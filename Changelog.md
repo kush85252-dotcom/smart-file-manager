@@ -1,58 +1,20 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
-
----
-
-## [Unreleased]
-
-### Added
-- Folder persistence system (planned)
-- Developer Companion system (planned)
-- Daily quest notifications (planned)
-- Commit reminder (planned)
-- Push reminder (planned)
-- Coding streak tracker (planned)
+## v1.3.0
 
 ### Changed
-- Improve configuration management
-- Improve settings loading
-- Better startup initialization
+
+* Refactored the code into separate modules.
+* Moved related functionality into its own files.
+* Cleaned up parts of the existing codebase.
+* Improved the overall project structure.
+* Made the code easier to work with and update.
 
 ### Fixed
-- Folder persistence bug
-- Remaining hardcoded paths
-- UI refresh issues
 
----
+* Fixed a few issues caused by the old code structure.
+* Improved stability in some parts of the app.
 
-## [1.1] - 2026-08-03
+### Notes
 
-### Added
-- GitHub Actions (Continuous Integration)
-- Automatic Python syntax checking on every push
-- Improved project structure
-
-### Changed
-- Improved configuration portability
-- Removed hardcoded development paths
-- Cleaner JSON configuration
-
-### Fixed
-- Hardcoded Python paths
-- Hardcoded JSON paths
-- GitHub workflow configuration
-
----
-
-## [1.0]
-
-### Added
-- Initial release
-- File organization
-- Preview mode
-- Auto mode
-- Category based organization
-- Logging system
-- Configuration system
-- Backup settings
+This update mainly focuses on cleaning up the code and making the project easier to maintain. There aren't many user-facing changes in this version.
