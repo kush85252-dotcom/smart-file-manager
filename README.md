@@ -70,9 +70,7 @@ If you find a bug or have an idea for the project, feel free to open an issue.
 
 ## Author
 
-**LUKO**
-
-GitHub: https://github.com/kush85252-dotcom
+**kush**
 
 ## License
 
