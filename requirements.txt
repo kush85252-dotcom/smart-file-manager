@@ -1,0 +1,11 @@
+PyQt6
+watchdog
+Send2Trash
+psutil
+humanize
+filetype
+pathspec
+python-dateutil
+PyYAML
+python-dotenv
+loguru
