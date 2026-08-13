@@ -10,9 +10,12 @@ A smart Python desktop application that automatically organizes files and folder
 * Configurable settings using JSON
 * Preview organization actions before applying changes
 * Logging and status tracking
+## screenshots
+<img width="1920" height="1030" alt="Screenshot 2026-08-12 105245" src="https://github.com/user-attachments/assets/10b64e71-3e9b-42f5-bfba-d3f714c1286f" />
+
+
 
 ## Built With
-<img width="1920" height="1030" alt="Screenshot 2026-08-12 105245" src="https://github.com/user-attachments/assets/960c18c3-bdcd-425f-9e73-e5b25b1d248e" />
 * Python
 * PyQt6
 * JSON Configuration
