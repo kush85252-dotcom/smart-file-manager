@@ -1,4 +1,3 @@
-<img width="1920" height="1030" alt="Screenshot 2026-08-12 105245" src="https://github.com/user-attachments/assets/960c18c3-bdcd-425f-9e73-e5b25b1d248e" />
 # Smart File Manager
 
 A smart Python desktop application that automatically organizes files and folders through an intuitive interface.
@@ -13,7 +12,7 @@ A smart Python desktop application that automatically organizes files and folder
 * Logging and status tracking
 
 ## Built With
-
+<img width="1920" height="1030" alt="Screenshot 2026-08-12 105245" src="https://github.com/user-attachments/assets/960c18c3-bdcd-425f-9e73-e5b25b1d248e" />
 * Python
 * PyQt6
 * JSON Configuration
