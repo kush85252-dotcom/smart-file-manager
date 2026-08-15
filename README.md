@@ -52,16 +52,28 @@ Smart File Manager is currently under active development. New features, improvem
 
 ## Roadmap
 
+### Completed
+
 * [x] File organization
-* [x] Folder monitoring
-* [x] Desktop GUI
+* [x] Automatic folder monitoring
+* [x] PyQt6 desktop interface
 * [x] JSON configuration
 * [x] Logging and status tracking
-* [ ] More organization options
-* [ ] Improved safety and undo features
-* [ ] Better reporting
-* [ ] Android version
 
+### In Progress
+
+* [ ] Customizable organization settings
+* [ ] Improved safety and undo features
+* [ ] Better organization reports
+* [ ] Additional organization options
+
+### Planned
+
+* [ ] Android version
+* [ ] Further performance improvements
+* [ ] Additional quality-of-life features
+
+This roadmap may change as development continues.
 ## Contributing
 
 Contributions, suggestions, and bug reports are welcome.
