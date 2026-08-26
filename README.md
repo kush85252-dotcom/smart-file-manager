@@ -11,10 +11,6 @@ A Python desktop application designed to make organizing files and folders easie
 * Logging and status tracking
 * Customizable organization settings
 
-## Screenshots
-
-![Smart File Manager](https://github.com/user-attachments/assets/10b64e71-3e9b-42f5-bfba-d3f714c1286f)
-
 ## Built With
 
 * Python
