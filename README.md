@@ -77,7 +77,7 @@ pip install -r requirements.txt
 ### 3. Run the application
 
 ```bash
-python smart_file_manager.py
+python main.py
 ```
 
 ## Project Status
