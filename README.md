@@ -1,14 +1,54 @@
 # Smart File Manager
 
-A Python desktop application designed to make organizing files and folders easier through a simple graphical interface.
+A Python desktop application designed to make organizing files and folders easier through a simple, modern graphical interface.
+
+## Highlights
+
+* Modern PyQt6 desktop interface
+* Built-in file explorer
+* Right-click context menu for quick file actions
+* Automatic folder monitoring
+* File and folder organization
+* Configurable settings with JSON
+* Logging and status tracking
+* Improved safety features
+* Customizable organization settings
+
+## What's New in v1.5
+
+### Major UI Update
+
+v1.5 introduces a major user interface update focused on making Smart File Manager easier and faster to use.
+
+* Added a built-in file explorer
+* Added a right-click context menu
+* Improved navigation and file management workflow
+* Improved overall desktop UI and usability
+
+### Safety Improvements
+
+* Improved safety around file operations
+* Safer organization workflow
+* Additional protections to help prevent unwanted file actions
+
+### Codebase Improvements
+
+* Refactored and cleaned up parts of the application
+* Improved project structure and maintainability
+* Various bug fixes and stability improvements
+
+> **Note:** This release jumps directly to **v1.5** as a major update instead of releasing the intermediate versions originally planned.
 
 ## Features
 
 * File and folder organization
 * Automatic folder monitoring
+* Built-in file explorer
+* Right-click context menu
 * Modern PyQt6 desktop interface
-* Configurable settings with JSON
+* JSON configuration
 * Logging and status tracking
+* Safety-focused file operations
 * Customizable organization settings
 
 ## Built With
@@ -44,7 +84,11 @@ python smart_file_manager.py
 
 **Active Development**
 
-Smart File Manager is currently under active development. New features, improvements, and bug fixes are being added over time.
+Smart File Manager is actively developed, with new features, improvements, performance updates, and bug fixes being added over time.
+
+### Current Version
+
+**v1.5**
 
 ## Roadmap
 
@@ -55,13 +99,17 @@ Smart File Manager is currently under active development. New features, improvem
 * [x] PyQt6 desktop interface
 * [x] JSON configuration
 * [x] Logging and status tracking
+* [x] Built-in file explorer
+* [x] Right-click context menu
+* [x] Safety improvements
+* [x] Codebase refactoring
 
 ### In Progress
 
-* [ ] Customizable organization settings
-* [ ] Improved safety and undo features
+* [ ] Improved undo and recovery features
 * [ ] Better organization reports
 * [ ] Additional organization options
+* [ ] Further UI and UX improvements
 
 ### Planned
 
@@ -70,6 +118,7 @@ Smart File Manager is currently under active development. New features, improvem
 * [ ] Additional quality-of-life features
 
 This roadmap may change as development continues.
+
 ## Contributing
 
 Contributions, suggestions, and bug reports are welcome.
