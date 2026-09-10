@@ -51,6 +51,9 @@ v1.5 introduces a major user interface update focused on making Smart File Manag
 * Safety-focused file operations
 * Customizable organization settings
 
+## screenshots <img width="1920" height="1034" alt="screenshot1" src="https://github.com/user-attachments/assets/2df294a5-66ef-4ae7-a4c5-cc2d27aea5eb" />
+
+
 ## Built With
 
 * Python
