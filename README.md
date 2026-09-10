@@ -46,7 +46,6 @@ v1.5 introduces a major user interface update focused on making Smart File Manag
 * Built-in file explorer
 * Right-click context menu
 * Modern PyQt6 desktop interface
-* JSON configuration
 * Logging and status tracking
 * Safety-focused file operations
 * Customizable organization settings
@@ -60,7 +59,6 @@ v1.5 introduces a major user interface update focused on making Smart File Manag
 * PyQt6
 * Watchdog
 * pathlib
-* JSON
 
 ## Installation
 
