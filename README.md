@@ -9,7 +9,6 @@ A Python desktop application designed to make organizing files and folders easie
 * Right-click context menu for quick file actions
 * Automatic folder monitoring
 * File and folder organization
-* Configurable settings with JSON
 * Logging and status tracking
 * Improved safety features
 * Customizable organization settings
@@ -98,7 +97,6 @@ Smart File Manager is actively developed, with new features, improvements, perfo
 * [x] File organization
 * [x] Automatic folder monitoring
 * [x] PyQt6 desktop interface
-* [x] JSON configuration
 * [x] Logging and status tracking
 * [x] Built-in file explorer
 * [x] Right-click context menu
