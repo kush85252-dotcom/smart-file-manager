@@ -1,133 +1,18 @@
-# Smart File Manager
-
-A Python desktop application designed to make organizing files and folders easier through a simple, modern graphical interface.
-
-## Highlights
-
-* Modern PyQt6 desktop interface
-* Built-in file explorer
-* Right-click context menu for quick file actions
-* Automatic folder monitoring
-* File and folder organization
-* Logging and status tracking
-* Improved safety features
-* Customizable organization settings
-
-## What's New in v1.5
-
-### Major UI Update
-
-v1.5 introduces a major user interface update focused on making Smart File Manager easier and faster to use.
-
-* Added a built-in file explorer
-* Added a right-click context menu
-* Improved navigation and file management workflow
-* Improved overall desktop UI and usability
-
-### Safety Improvements
-
-* Improved safety around file operations
-* Safer organization workflow
-* Additional protections to help prevent unwanted file actions
-
-### Codebase Improvements
-
-* Refactored and cleaned up parts of the application
-* Improved project structure and maintainability
-* Various bug fixes and stability improvements
-
-> **Note:** This release jumps directly to **v1.5** as a major update instead of releasing the intermediate versions originally planned.
-
-## Features
-
-* File and folder organization
-* Automatic folder monitoring
-* Built-in file explorer
-* Right-click context menu
-* Modern PyQt6 desktop interface
-* Logging and status tracking
-* Safety-focused file operations
-* Customizable organization settings
-
-## screenshots <img width="1920" height="1034" alt="screenshot1" src="https://github.com/user-attachments/assets/2df294a5-66ef-4ae7-a4c5-cc2d27aea5eb" />
+# 💫 About Me:
+# Smart File Manager<br><br>A Python desktop application designed to make organizing files and folders easier through a simple, modern graphical interface.<br><br>## Highlights<br><br>* Modern PyQt6 desktop interface<br>* Built-in file explorer<br>* Right-click context menu for quick file actions<br>* Automatic folder monitoring<br>* File and folder organization<br>* Logging and status tracking<br>* Improved safety features<br>* Customizable organization settings<br><br>## What's New in v1.5<br><br>### Major UI Update<br><br>v1.5 introduces a major user interface update focused on making Smart File Manager easier and faster to use.<br><br>* Added a built-in file explorer<br>* Added a right-click context menu<br>* Improved navigation and file management workflow<br>* Improved overall desktop UI and usability<br><br>### Safety Improvements<br><br>* Improved safety around file operations<br>* Safer organization workflow<br>* Additional protections to help prevent unwanted file actions<br><br>### Codebase Improvements<br><br>* Refactored and cleaned up parts of the application<br>* Improved project structure and maintainability<br>* Various bug fixes and stability improvements<br><br>> **Note:** This release jumps directly to **v1.5** as a major update instead of releasing the intermediate versions originally planned.<br><br>## Features<br><br>* File and folder organization<br>* Automatic folder monitoring<br>* Built-in file explorer<br>* Right-click context menu<br>* Modern PyQt6 desktop interface<br>* Logging and status tracking<br>* Safety-focused file operations<br>* Customizable organization settings<br><br>## screenshots <img width="1920" height="1034" alt="screenshot1" src="https://github.com/user-attachments/assets/2df294a5-66ef-4ae7-a4c5-cc2d27aea5eb" /><br><br><br>## Built With<br><br>* Python<br>* PyQt6<br>* Watchdog<br>* pathlib<br><br>## Installation<br><br>### 1. Clone the repository<br><br>```bash<br>git clone https://github.com/kush85252-dotcom/smart-file-manager.git<br>cd smart-file-manager<br>```<br><br>### 2. Install dependencies<br><br>```bash<br>pip install -r requirements.txt<br>```<br><br>### 3. Run the application<br><br>```bash<br>python main.py<br>```<br><br>## Project Status<br><br>**Active Development**<br><br>Smart File Manager is actively developed, with new features, improvements, performance updates, and bug fixes being added over time.<br><br>### Current Version<br><br>**v1.5**<br><br>## Roadmap<br><br>### Completed<br><br>* [x] File organization<br>* [x] Automatic folder monitoring<br>* [x] PyQt6 desktop interface<br>* [x] Logging and status tracking<br>* [x] Built-in file explorer<br>* [x] Right-click context menu<br>* [x] Safety improvements<br>* [x] Codebase refactoring<br><br>### In Progress<br><br>* [ ] Improved undo and recovery features<br>* [ ] Better organization reports<br>* [ ] Additional organization options<br>* [ ] Further UI and UX improvements<br><br>### Planned<br><br>* [ ] Android version<br>* [ ] Further performance improvements<br>* [ ] Additional quality-of-life features<br><br>This roadmap may change as development continues.<br><br>## Contributing<br><br>Contributions, suggestions, and bug reports are welcome.<br><br>If you find a bug or have an idea for the project, feel free to open an issue.<br><br>## Author<br><br>**kush**<br><br>## License<br><br>See the repository for license information.<br>
 
 
-## Built With
+## 🌐 Socials:
+[![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?logo=YouTube&logoColor=white)](https://youtube.com/@https://www.youtube.com/@LUKOFORGE) 
 
-* Python
-* PyQt6
-* Watchdog
-* pathlib
+# 💻 Tech Stack:
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+# 📊 GitHub Stats:
+![](https://github-readme-stats.shion.dev/api?username=kush85252-dotcom&theme=dark&hide_border=false&include_all_commits=false&count_private=false)<br/>
+![](https://streak-stats.demolab.com/?user=kush85252-dotcom&theme=dark&hide_border=false)<br/>
+![](https://github-readme-stats.shion.dev/api/top-langs/?username=kush85252-dotcom&theme=dark&hide_border=false&include_all_commits=false&count_private=false&layout=compact)
 
-## Installation
+---
+[![](https://komarev.com/ghpvc/?username=kush85252-dotcom&icon=0&color=0)](https://visitcount.itsvg.in)
 
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/kush85252-dotcom/smart-file-manager.git
-cd smart-file-manager
-```
-
-### 2. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Run the application
-
-```bash
-python main.py
-```
-
-## Project Status
-
-**Active Development**
-
-Smart File Manager is actively developed, with new features, improvements, performance updates, and bug fixes being added over time.
-
-### Current Version
-
-**v1.5**
-
-## Roadmap
-
-### Completed
-
-* [x] File organization
-* [x] Automatic folder monitoring
-* [x] PyQt6 desktop interface
-* [x] Logging and status tracking
-* [x] Built-in file explorer
-* [x] Right-click context menu
-* [x] Safety improvements
-* [x] Codebase refactoring
-
-### In Progress
-
-* [ ] Improved undo and recovery features
-* [ ] Better organization reports
-* [ ] Additional organization options
-* [ ] Further UI and UX improvements
-
-### Planned
-
-* [ ] Android version
-* [ ] Further performance improvements
-* [ ] Additional quality-of-life features
-
-This roadmap may change as development continues.
-
-## Contributing
-
-Contributions, suggestions, and bug reports are welcome.
-
-If you find a bug or have an idea for the project, feel free to open an issue.
-
-## Author
-
-**kush**
-
-## License
-
-See the repository for license information.
+<!-- Proudly created with GPRM ( https://gprm.itsvg.in ) -->
