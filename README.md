@@ -81,6 +81,12 @@ Configure organization behavior through the application's settings.
 * Watchdog
 * pathlib
 
+## Quick Links
+
+- [GitHub Repository](https://github.com/kush85252-dotcom/smart-file-manager)
+- [Latest Release](https://github.com/kush85252-dotcom/smart-file-manager/releases/tag/1.5)
+- [Releases](https://github.com/kush85252-dotcom/smart-file-manager/releases)
+- [Issues](https://github.com/kush85252-dotcom/smart-file-manager/issues)
 ## Installation
 
 ### Clone the Repository
