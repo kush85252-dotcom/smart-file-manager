@@ -156,6 +156,13 @@ If you find a bug, have a feature request, or want to suggest an improvement, op
 
 **Kush**
 
+> **Repository Notice**
+>
+> The repository is currently being updated and fixed. Some files or features may be temporarily inconsistent while the latest stable version is being restored.
+>
+> The working **v1.5** release remains available while these changes are being made.
+
+
 ## License
 
 Smart File Manager is licensed under the MIT License.
