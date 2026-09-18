@@ -4,6 +4,13 @@ Smart File Manager is a Python desktop application for organizing files and fold
 
 It combines file organization, automatic folder monitoring, built-in file browsing, and safety-focused file operations in one lightweight desktop application.
 
+> **Repository Notice**
+>
+> The repository is currently being updated and fixed. Some files or features may be temporarily inconsistent while the latest stable version is being restored.
+>
+> The working **v1.5** release remains available while these changes are being made.
+
+
 ## Highlights
 
 * Modern PyQt6 desktop interface
@@ -155,13 +162,6 @@ If you find a bug, have a feature request, or want to suggest an improvement, op
 ## Author
 
 **Kush**
-
-> **Repository Notice**
->
-> The repository is currently being updated and fixed. Some files or features may be temporarily inconsistent while the latest stable version is being restored.
->
-> The working **v1.5** release remains available while these changes are being made.
-
 
 ## License
 
