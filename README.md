@@ -8,7 +8,7 @@ Smart File Manager helps you organize, browse, preview, and manage files through
 
 * Modern PyQt6 desktop interface
 * Built-in file explorer
-* Manual and automatic organization modes
+* Manual mode
 * Automatic folder monitoring
 * Preview files before opening or organizing them
 * Dry-run / preview mode for planned operations
@@ -91,7 +91,6 @@ Safety features include:
 * Undo history
 * Operation logging
 * Collision-aware file handling
-* Trash-based deletion where supported
 
 Always review organization settings before enabling automatic organization on important folders.
 
