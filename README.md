@@ -2,36 +2,38 @@
 
 A modern, local-first file organizer and manager for Windows.
 
-Smart File Manager helps you organize files into categories, preview files, monitor folders, and safely manage file operations through a simple desktop interface.
+Smart File Manager helps you organize, browse, preview, and manage files through a clean desktop interface — while keeping file operations visible and under your control.
 
 ## Features
 
 * Modern PyQt6 desktop interface
 * Built-in file explorer
-* Automatic file organization
-* Manual and automatic modes
-* File categories for:
-
-  * Documents
-  * Images
-  * Videos
-  * Audio
-  * Archives
-  * Applications
-  * Android APKs
-  * Scripts
-  * Code
-  * Others
-* File preview
-* Folder monitoring
+* Manual and automatic organization modes
+* Automatic folder monitoring
+* Preview files before opening or organizing them
+* Dry-run / preview mode for planned operations
 * Right-click context menu
-* Live activity logs
-* Reports
 * Undo support for file operations
-* Safety-focused file handling
-* Dry-run / preview mode
+* Live activity logs
+* Operation reports
 * Dark theme
+* Safety-focused file handling
 * Local-first design
+
+### File Categories
+
+Smart File Manager can organize files into categories including:
+
+* Documents
+* Images
+* Videos
+* Audio
+* Archives
+* Applications
+* Android APKs
+* Scripts
+* Code
+* Others
 
 ## Screenshots
 
@@ -47,7 +49,7 @@ Screenshots will be added soon.
 
 ### Release
 
-Download the latest release from the GitHub Releases page and run the application.
+Download the latest version from the [GitHub Releases](../../releases) page and run the application.
 
 ### From Source
 
@@ -58,7 +60,7 @@ git clone https://github.com/kush85252-dotcom/smart-file-manager.git
 cd smart-file-manager
 ```
 
-Install dependencies:
+Install the dependencies:
 
 ```bash
 pip install -r requirements.txt
@@ -72,39 +74,45 @@ python app.py
 
 ## How It Works
 
-Smart File Manager scans the folders you choose and identifies files using rule-based categories such as file extensions and file types.
+Smart File Manager uses local, deterministic rules to identify files based on information such as file extensions and file types.
 
-You stay in control of where files are moved.
+You choose which folders Smart File Manager can work with, and you remain in control of where files are moved.
 
-Before performing potentially large operations, use Preview or Dry Run mode to review what will happen.
+For larger operations, use **Preview** or **Dry Run** mode to review the planned changes before anything is moved.
 
 ## Safety
 
-Smart File Manager is designed with safe file handling in mind.
+File management operations can affect important data, so Smart File Manager is designed with safety in mind.
 
-File operations include safeguards such as:
+Safety features include:
 
 * Preview mode
 * Dry-run support
 * Undo history
-* Trash-based deletion where supported
 * Operation logging
+* Collision-aware file handling
+* Trash-based deletion where supported
 
-Always review automatic organization settings before enabling them on important folders.
+Always review organization settings before enabling automatic organization on important folders.
 
-## Privacy
+## Privacy & Local-First Design
 
-Smart File Manager is local-first.
+Smart File Manager is designed to work locally.
 
-The core application does not require an online account or cloud service to organize your files.
+The core application does not require:
 
-Your files remain on your computer.
+* An online account
+* A cloud service
+* Uploaded files
+* Remote processing
+
+Your files stay on your computer while Smart File Manager performs its core organization and management tasks locally.
 
 ## AI
 
-The core Smart File Manager application does not depend on AI.
+Smart File Manager does **not** require AI.
 
-File organization is handled locally using deterministic, rule-based logic.
+File categorization and organization use deterministic, rule-based logic that runs locally on your computer.
 
 ## Project Status
 
@@ -112,7 +120,7 @@ Smart File Manager is actively being developed.
 
 Features, UI components, and internal architecture may change between releases.
 
-Check the [CHANGELOG](CHANGELOG.md) for release history and changes.
+See the [CHANGELOG](CHANGELOG.md) for release history and changes.
 
 ## Contributing
 
@@ -134,9 +142,9 @@ See [LICENSE](LICENSE) for the full license text.
 
 ## Links
 
-* GitHub: https://github.com/kush85252-dotcom/smart-file-manager
-* Releases: https://github.com/kush85252-dotcom/smart-file-manager/releases
-* Issues: https://github.com/kush85252-dotcom/smart-file-manager/issues
+* [GitHub Repository](https://github.com/kush85252-dotcom/smart-file-manager)
+* [Releases](https://github.com/kush85252-dotcom/smart-file-manager/releases)
+* [Issues](https://github.com/kush85252-dotcom/smart-file-manager/issues)
 
 ---
 
