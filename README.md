@@ -128,7 +128,7 @@ Running from source is useful for development, testing, or running the latest co
 
 #### Requirements
 
-* Windows 10 or later
+* Windows 10 or newer
 * Python 3.10+
 * Git
 
