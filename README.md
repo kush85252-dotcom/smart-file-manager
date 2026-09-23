@@ -83,7 +83,6 @@ View information about file operations through:
 Smart File Manager includes:
 
 * Preview mode
-* Dry-run mode
 * Undo support
 * Collision-aware operations
 * Operation logging
@@ -105,7 +104,8 @@ The interface includes:
 
 ## Screenshots
 
-Screenshots will be added as the interface develops.
+<img width="1920" height="1034" alt="screenshot1" src="https://github.com/user-attachments/assets/9536da34-bbfa-43b7-96e0-cb250c932c2e" />
+
 
 ## Installation
 
