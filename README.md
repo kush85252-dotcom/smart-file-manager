@@ -11,7 +11,6 @@ Built with Python and PyQt6.
 Managing a Downloads folder full of different files can get messy quickly.
 
 Smart File Manager helps organize files into categories based on local, rule-based file detection.
-it also supports other folders as well.
 You can:
 
 * Browse files
