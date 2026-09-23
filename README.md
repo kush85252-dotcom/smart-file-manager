@@ -10,14 +10,14 @@ Built with Python and PyQt6.
 
 Managing a Downloads folder full of different files can get messy quickly.
 
-Smart File Manager helps organize files into categories based on local, rule-based file detection.
+Smart File Manager helps organize files into categories using local, rule-based file detection.
+
 You can:
 
 * Browse files
 * Preview supported files
-* Organize files manually
-* Automatically organize files
-* Monitor folders for changes
+* Scan a folder once
+* Organize files using Organizing Mode
 * Preview planned operations before running them
 * Undo supported file operations
 * View activity and operation logs
@@ -43,6 +43,18 @@ Smart File Manager can organize files into categories including:
 | Code         | `.py`, `.cpp`, `.js`, `.html` |
 | Others       | Unrecognized file types       |
 
+### 1-Time Scan
+
+Scan the selected folder once to detect and analyze the files currently inside it.
+
+The scan does not continuously monitor the folder after it finishes.
+
+### Organizing Mode
+
+Organizing Mode uses the selected organization settings to organize files into their appropriate categories.
+
+You can review the planned operations before applying them.
+
 ### File Explorer
 
 Browse files directly inside Smart File Manager.
@@ -58,12 +70,6 @@ Preview supported files before performing operations.
 Review planned file operations before applying them.
 
 This is useful when organizing folders containing large numbers of files.
-
-### Automatic Organization
-
-Enable folder monitoring to detect changes automatically.
-
-Newly detected files can be processed according to your organization settings.
 
 ### Undo
 
@@ -96,16 +102,16 @@ The interface includes:
 
 * File explorer
 * Organization controls
+* 1-Time Scan
+* Organizing Mode
 * File preview
 * File operations
-* Folder monitoring
 * Activity information
 * Dark theme
 
 ## Screenshots
 
 <img width="1920" height="1034" alt="screenshot1" src="https://github.com/user-attachments/assets/9536da34-bbfa-43b7-96e0-cb250c932c2e" />
-
 
 ## Installation
 
@@ -196,11 +202,15 @@ A typical workflow is:
 ```text
 Select Folder
      |
-Review Settings
+Choose Mode
      |
-Preview / Dry Run
+1-Time Scan
      |
-Review Planned Changes
+Review Results
+     |
+Organizing Mode
+     |
+Preview Planned Changes
      |
 Organize Files
      |
@@ -211,38 +221,15 @@ Undo if Necessary
 
 You choose which folder Smart File Manager works with and when file operations are performed.
 
-## Automatic Folder Monitoring
-
-Smart File Manager can monitor selected folders for changes.
-
-A typical organization structure can look like:
-
-```text
-Downloads
-|
-+-- Documents
-+-- Images
-+-- Videos
-+-- Audio
-+-- Archives
-+-- Applications
-+-- APKs
-+-- Scripts
-+-- Code
-+-- Others
-```
-
-When monitoring is enabled, newly detected files can be processed according to your selected organization settings.
-
-Review your settings before enabling automatic organization on important folders.
-
 ## How It Works
 
 Smart File Manager uses deterministic, rule-based logic to categorize files.
 
 File information such as extensions and file types is used to determine the appropriate category.
 
-The application then creates an organization plan based on the selected folder and settings.
+The application can first scan the selected folder using **1-Time Scan**.
+
+When you are ready to organize the files, **Organizing Mode** uses the selected settings to create and perform the organization operations.
 
 Before large operations, Preview or Dry Run mode can be used to inspect planned changes.
 
@@ -274,10 +261,12 @@ Smart File Manager works with real files, so care should be taken when organizin
 Before performing large operations:
 
 1. Select the correct folder.
-2. Review the organization settings.
-3. Run Preview or Dry Run.
-4. Review the planned changes.
-5. Start the operation when ready.
+2. Run a 1-Time Scan.
+3. Review the results.
+4. Review the organization settings.
+5. Use Preview or Dry Run.
+6. Review the planned changes.
+7. Start the operation when ready.
 
 Keeping independent backups of important files is recommended.
 
@@ -393,7 +382,7 @@ Some Windows folders have restricted permissions.
 
 If Smart File Manager cannot access a folder, test it with a folder that your Windows account can normally read and modify.
 
-Avoid testing automatic organization on protected Windows system folders.
+Avoid testing file organization on protected Windows system folders.
 
 ## Project Status
 
