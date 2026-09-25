@@ -8,9 +8,9 @@ Built with Python and PyQt6.
 
 ## What is Smart File Manager?
 
-Managing a Downloads folder full of different files can get messy quickly.
+Managing a Downloads folder containing different types of files can get messy quickly.
 
-Smart File Manager helps organize files into categories using local, rule-based file detection.
+Smart File Manager helps organize files into categories using local, deterministic, rule-based file detection.
 
 You can:
 
@@ -18,9 +18,9 @@ You can:
 * Preview supported files
 * Scan a folder once
 * Organize files using Organizing Mode
-* Preview planned operations before running them
+* Preview planned operations before applying them
 * Undo supported file operations
-* View activity and operation logs
+* View activity logs and operation reports
 
 Everything happens locally on your Windows PC.
 
@@ -28,7 +28,7 @@ Everything happens locally on your Windows PC.
 
 ### File Organization
 
-Smart File Manager can organize files into categories including:
+Smart File Manager can organize files into categories based on their file types and extensions.
 
 | Category     | Examples                      |
 | ------------ | ----------------------------- |
@@ -45,21 +45,21 @@ Smart File Manager can organize files into categories including:
 
 ### 1-Time Scan
 
-Scan the selected folder once to detect and analyze the files currently inside it.
+Scan a selected folder once to detect and analyze the files currently inside it.
 
-The scan does not continuously monitor the folder after it finishes.
+The scan finishes after processing the selected folder and does not continuously monitor it.
 
 ### Organizing Mode
 
-Organizing Mode uses the selected organization settings to organize files into their appropriate categories.
+Organizing Mode uses your selected organization settings to organize files into their appropriate categories.
 
-You can review the planned operations before applying them.
+Planned operations can be reviewed before they are applied.
 
 ### File Explorer
 
 Browse files directly inside Smart File Manager.
 
-The built-in explorer provides access to file operations without requiring a separate file manager window.
+The built-in explorer provides access to supported file operations without requiring a separate file manager window.
 
 ### File Preview
 
@@ -69,7 +69,7 @@ Preview supported files before performing operations.
 
 Review planned file operations before applying them.
 
-This is useful when organizing folders containing large numbers of files.
+This is especially useful when organizing folders containing large numbers of files.
 
 ### Undo
 
@@ -77,7 +77,7 @@ Supported file operations can be reversed using the built-in undo functionality.
 
 ### Activity Logs and Reports
 
-View information about file operations through:
+Track file operations through:
 
 * Live activity logs
 * Operation history
@@ -89,6 +89,7 @@ View information about file operations through:
 Smart File Manager includes:
 
 * Preview mode
+* Dry Run support
 * Undo support
 * Collision-aware operations
 * Operation logging
@@ -111,13 +112,13 @@ The interface includes:
 
 ## Screenshots
 
-<img width="1920" height="1034" alt="screenshot1" src="https://github.com/user-attachments/assets/9536da34-bbfa-43b7-96e0-cb250c932c2e" />
+<img width="1920" height="1034" alt="Smart File Manager screenshot" src="https://github.com/user-attachments/assets/9536da34-bbfa-43b7-96e0-cb250c932c2e" />
 
 ## Installation
 
 ### Windows Release
 
-The easiest way to use Smart File Manager is to download a packaged release.
+The easiest way to use Smart File Manager is to download a packaged Windows release.
 
 1. Open the [Releases](../../releases) page.
 2. Download the latest Windows release.
@@ -129,7 +130,7 @@ Python is not required when using a packaged Windows release.
 
 ### Run From Source
 
-Running from source is useful for development, testing, or running the latest code from the repository.
+Running from source is useful for development, testing, or using the latest repository code.
 
 #### Requirements
 
@@ -164,13 +165,13 @@ python -m venv .venv
 
 #### 3. Activate the Virtual Environment
 
-Command Prompt:
+**Command Prompt:**
 
 ```bat
 .venv\Scripts\activate
 ```
 
-PowerShell:
+**PowerShell:**
 
 ```powershell
 .venv\Scripts\Activate.ps1
@@ -197,7 +198,7 @@ python -m smart_file_manager
 
 ## Basic Workflow
 
-A typical workflow is:
+A typical workflow looks like this:
 
 ```text
 Select Folder
@@ -229,9 +230,9 @@ File information such as extensions and file types is used to determine the appr
 
 The application can first scan the selected folder using **1-Time Scan**.
 
-When you are ready to organize the files, **Organizing Mode** uses the selected settings to create and perform the organization operations.
+When you are ready to organize files, **Organizing Mode** uses the selected settings to create and perform the organization operations.
 
-Before large operations, Preview or Dry Run mode can be used to inspect planned changes.
+Before larger operations, **Preview** or **Dry Run** mode can be used to inspect the planned changes.
 
 ## Privacy
 
@@ -438,3 +439,8 @@ See [LICENSE](LICENSE) for the full license text.
 ---
 
 Built with Python and PyQt6.
+
+```
+
+Main changes: **less repetition, cleaner wording, consistent terminology, better section flow, and no fake “enterprise” fluff.** The substance of your README is still yours.
+```
