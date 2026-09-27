@@ -441,8 +441,3 @@ See [LICENSE](LICENSE) for the full license text.
 ---
 
 Built with Python and PyQt6.
-
-```
-
-Main changes: **less repetition, cleaner wording, consistent terminology, better section flow, and no fake “enterprise” fluff.** The substance of your README is still yours.
-```
