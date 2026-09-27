@@ -126,7 +126,7 @@ The easiest way to use Smart File Manager is to download a packaged Windows rele
 2. Download the latest Windows release.
 3. If the release is provided as a ZIP file, extract it.
 4. Open the extracted folder.
-5. Run the Smart File Manager python file.
+5. Run the Smart File Manager python file (organizer.py).
 
 Python is not required when using a packaged Windows release.
 
