@@ -28,7 +28,7 @@ Everything happens locally on your Windows PC.
 
 ### File Organization
 
-Smart File Manager can organize files into categories based on their file types and extensions.
+Smart File Manager can organize files into categories based on their file types and extensions (example).
 
 | Category     | Examples                      |
 | ------------ | ----------------------------- |
