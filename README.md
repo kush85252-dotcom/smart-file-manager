@@ -113,6 +113,8 @@ The interface includes:
 ## Screenshots
 
 <img width="1920" height="1034" alt="Smart File Manager screenshot" src="https://github.com/user-attachments/assets/9536da34-bbfa-43b7-96e0-cb250c932c2e" />
+<img width="1919" height="1034" alt="screenshot 2" src="https://github.com/user-attachments/assets/f6f5474e-98d3-4aef-ac87-badb95ddcac9" />
+
 
 ## Installation
 
