@@ -189,7 +189,7 @@ pip install -r requirements.txt
 #### 5. Run Smart File Manager
 
 ```bash
-python organizer.py
+python main.py
 ```
 
 The module entry point can also be used:
