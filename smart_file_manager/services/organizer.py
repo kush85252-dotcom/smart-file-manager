@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Callable, Iterable
 
 from .file_operations import available_destination, move_path
-from ..categorization import category_for
+from ..categorization import organization_folder_for
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +17,7 @@ UndoOperation = list[tuple[Path, Path]]
 def build_organize_plan(
     files: Iterable[Path],
     current_folder: Path,
+    organization_mode: str = "category",
 ) -> list[OrganizePlanItem]:
     """Build source/category-folder/destination tuples for files in a folder."""
     plan = []
@@ -25,7 +26,11 @@ def build_organize_plan(
         try:
             if not path.is_file():
                 continue
-            category = category_for(path)
+            category = organization_folder_for(path, organization_mode)
+            # A recursive scan should be idempotent: do not move files that
+            # are already inside their selected destination folder.
+            if path.parent.name == category:
+                continue
         except OSError as error:
             logger.warning("Could not inspect %s: %s", path, error)
             continue
@@ -40,6 +45,7 @@ def build_organize_plan(
 def organize_plan(
     plan: Iterable[OrganizePlanItem],
     progress_callback: Callable[[int], None] | None = None,
+    create_category_folders: bool = True,
 ) -> UndoOperation:
     """Execute an organization plan and return records usable by undo."""
     plan = list(plan)
@@ -48,7 +54,14 @@ def organize_plan(
 
     for index, (source, folder, destination) in enumerate(plan):
         try:
-            folder.mkdir(parents=True, exist_ok=True)
+            if not folder.exists():
+                if not create_category_folders:
+                    logger.info("Skipping %s because %s does not exist.", source, folder)
+                    continue
+                folder.mkdir(parents=True, exist_ok=True)
+            elif not folder.is_dir():
+                logger.warning("Skipping %s because %s is not a folder.", source, folder)
+                continue
             destination = available_destination(destination)
             move_path(source, destination)
             moved_files.append((destination, source))

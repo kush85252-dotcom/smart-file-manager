@@ -173,4 +173,86 @@ STYLESHEET = """
         color: #777f8c;
         padding: 4px;
     }
+
+    #settingsCard {
+        background: #191c22;
+        border: 1px solid #292d35;
+        border-radius: 12px;
+    }
+
+    QCheckBox {
+        spacing: 8px;
+        color: #e8e8e8;
+    }
+
+    QComboBox {
+        background: #191c22;
+        border: 1px solid #303541;
+        border-radius: 8px;
+        padding: 8px;
+        min-width: 180px;
+    }
+
+    QScrollArea {
+        background: transparent;
+    }
+"""
+
+
+LIGHT_STYLESHEET = """
+    QWidget {
+        background: #f5f6f8;
+        color: #20242c;
+        font-family: Segoe UI;
+        font-size: 14px;
+    }
+    #sidebar {
+        background: #e9ebef;
+        border-right: 1px solid #d5d9e0;
+    }
+    #appTitle, #heading { color: #171a20; }
+    #version, #sidebarInfo, #description, #location, #status { color: #68707d; }
+    QPushButton {
+        background: #ffffff;
+        border: 1px solid #cfd4dd;
+        border-radius: 8px;
+        padding: 9px 14px;
+        color: #20242c;
+    }
+    QPushButton:hover { background: #eef1f5; }
+    #sidebarButton { border: none; color: #4b5360; text-align: left; padding: 13px; }
+    #sidebarButton:hover { background: #dce1e8; color: #171a20; }
+    QLineEdit, QComboBox {
+        background: #ffffff;
+        border: 1px solid #cfd4dd;
+        border-radius: 8px;
+        padding: 9px;
+        color: #20242c;
+    }
+    #card, #categoryInfo, #preview, #settingsCard {
+        background: #ffffff;
+        border: 1px solid #d5d9e0;
+        border-radius: 12px;
+    }
+    #cardTitle { color: #68707d; }
+    #cardValue { color: #171a20; }
+    QTableWidget {
+        background: #ffffff;
+        alternate-background-color: #f4f5f7;
+        border: 1px solid #d5d9e0;
+        gridline-color: #e1e4e9;
+        selection-background-color: #dbe7f7;
+        selection-color: #171a20;
+    }
+    QHeaderView::section {
+        background: #e9ebef;
+        color: #4b5360;
+        border: none;
+        padding: 9px;
+        font-weight: bold;
+    }
+    QProgressBar { background: #ffffff; border: 1px solid #cfd4dd; }
+    QProgressBar::chunk { background: #6b7788; }
+    QCheckBox { color: #20242c; }
+    QScrollArea { background: transparent; }
 """

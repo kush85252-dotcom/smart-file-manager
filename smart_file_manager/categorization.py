@@ -69,3 +69,10 @@ def category_for(path: Path) -> str:
             return category
 
     return "Others"
+
+
+def organization_folder_for(path: Path, mode: str = "category") -> str:
+    """Return the folder name used by the selected organization mode."""
+    if mode == "extension":
+        return path.suffix[1:].upper() if path.suffix else "No Extension"
+    return category_for(path)
