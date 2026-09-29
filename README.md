@@ -8,7 +8,7 @@ Built with Python and PyQt6.
 
 ## What is Smart File Manager?
 
-Managing a Downloads folder containing different types of files can get messy quickly.
+Managing a folder containing different types of files can get messy quickly.
 
 Smart File Manager helps organize files into categories using local, deterministic, rule-based file detection.
 
@@ -17,10 +17,15 @@ You can:
 * Browse files
 * Preview supported files
 * Scan a folder once
+* Optionally scan subfolders
 * Organize files using Organizing Mode
 * Preview planned operations before applying them
+* Confirm operations before they are performed
 * Undo supported file operations
-* View activity logs and operation reports
+* Move deleted files to the Windows Trash
+* Customize application settings
+* Show or hide hidden files
+* Change the interface theme and scaling
 
 Everything happens locally on your Windows PC.
 
@@ -28,7 +33,7 @@ Everything happens locally on your Windows PC.
 
 ### File Organization
 
-Smart File Manager can organize files into categories based on their file types and extensions (example).
+Smart File Manager can organize files into categories based on their file types and extensions.
 
 | Category     | Examples                      |
 | ------------ | ----------------------------- |
@@ -47,13 +52,15 @@ Smart File Manager can organize files into categories based on their file types 
 
 Scan a selected folder once to detect and analyze the files currently inside it.
 
-The scan finishes after processing the selected folder and does not continuously monitor it.
+Subfolder scanning can optionally be enabled when a deeper scan is needed.
 
 ### Organizing Mode
 
 Organizing Mode uses your selected organization settings to organize files into their appropriate categories.
 
 Planned operations can be reviewed before they are applied.
+
+Operations require confirmation before changes are performed.
 
 ### File Explorer
 
@@ -65,35 +72,56 @@ The built-in explorer provides access to supported file operations without requi
 
 Preview supported files before performing operations.
 
-### Preview and Dry Run
+### Preview and Confirmation
 
 Review planned file operations before applying them.
 
-This is especially useful when organizing folders containing large numbers of files.
+Smart File Manager shows the planned changes so you can inspect what will happen before confirming an operation.
 
 ### Undo
 
 Supported file operations can be reversed using the built-in undo functionality.
 
-### Activity Logs and Reports
+### Windows Trash Support
 
-Track file operations through:
+Deleted files can be moved to the native Windows Trash instead of being permanently removed where supported.
 
-* Live activity logs
-* Operation history
-* Reports
-* Organization results
+### Settings
+
+Smart File Manager includes a persistent Settings page backed by JSON configuration.
+
+Settings include options such as:
+
+* Interface theme
+* UI scaling
+* Hidden file visibility
+* Subfolder scanning
+* Organization behavior
+
+Settings are preserved between application launches.
+
+### Themes and UI Scaling
+
+Smart File Manager supports:
+
+* Light theme
+* Dark theme
+* Live UI scaling changes
+
+The interface is built with native PyQt6 components for Windows.
 
 ### Safety-Focused File Handling
 
 Smart File Manager includes:
 
-* Preview mode
-* Dry Run support
+* Preview support
+* Confirmation controls
 * Undo support
 * Collision-aware operations
 * Operation logging
-* Trash-based deletion where supported
+* Windows Trash support where applicable
+
+The application is designed to keep file operations visible and under your control.
 
 ## Interface
 
@@ -106,15 +134,16 @@ The interface includes:
 * 1-Time Scan
 * Organizing Mode
 * File preview
+* Settings
 * File operations
 * Activity information
-* Dark theme
+* Light and Dark themes
+* Adjustable UI scaling
 
 ## Screenshots
 
 <img width="1920" height="1034" alt="Smart File Manager screenshot" src="https://github.com/user-attachments/assets/9536da34-bbfa-43b7-96e0-cb250c932c2e" />
 <img width="1919" height="1034" alt="screenshot 2" src="https://github.com/user-attachments/assets/f6f5474e-98d3-4aef-ac87-badb95ddcac9" />
-
 
 ## Installation
 
@@ -126,7 +155,7 @@ The easiest way to use Smart File Manager is to download a packaged Windows rele
 2. Download the latest Windows release.
 3. If the release is provided as a ZIP file, extract it.
 4. Open the extracted folder.
-5. Run the Smart File Manager python file (main.py)
+5. Run the included Smart File Manager launcher.
 
 Python is not required when using a packaged Windows release.
 
@@ -189,13 +218,19 @@ pip install -r requirements.txt
 #### 5. Run Smart File Manager
 
 ```bash
-python main.py
+python organizer.py
 ```
 
-The module entry point can also be used:
+The package launcher can also be used:
 
 ```bash
 python -m smart_file_manager
+```
+
+Or, when running the application launcher directly:
+
+```bash
+python smart_file_manager/main.py
 ```
 
 ## Basic Workflow
@@ -205,7 +240,7 @@ A typical workflow looks like this:
 ```text
 Select Folder
      |
-Choose Mode
+Configure Settings
      |
 1-Time Scan
      |
@@ -215,9 +250,11 @@ Organizing Mode
      |
 Preview Planned Changes
      |
+Confirm Operation
+     |
 Organize Files
      |
-Check Activity / Report
+Review Results
      |
 Undo if Necessary
 ```
@@ -232,9 +269,27 @@ File information such as extensions and file types is used to determine the appr
 
 The application can first scan the selected folder using **1-Time Scan**.
 
-When you are ready to organize files, **Organizing Mode** uses the selected settings to create and perform the organization operations.
+If enabled, subfolder scanning allows the scan to include files inside subdirectories.
 
-Before larger operations, **Preview** or **Dry Run** mode can be used to inspect the planned changes.
+When you are ready to organize files, **Organizing Mode** uses the selected settings to create and perform organization operations.
+
+Before changes are applied, **Preview** allows you to inspect the planned operations.
+
+Operations are then performed only after confirmation.
+
+## Settings and Configuration
+
+Smart File Manager stores application settings locally using JSON configuration.
+
+Settings persist between launches and control application behavior such as:
+
+* Theme
+* UI scaling
+* Hidden file visibility
+* Subfolder scanning
+* Organization settings
+
+Configuration is stored locally on the Windows PC.
 
 ## Privacy
 
@@ -264,12 +319,13 @@ Smart File Manager works with real files, so care should be taken when organizin
 Before performing large operations:
 
 1. Select the correct folder.
-2. Run a 1-Time Scan.
-3. Review the results.
-4. Review the organization settings.
-5. Use Preview or Dry Run.
-6. Review the planned changes.
-7. Start the operation when ready.
+2. Configure the required settings.
+3. Run a 1-Time Scan.
+4. Review the results.
+5. Review the organization settings.
+6. Use Preview.
+7. Review the planned changes.
+8. Confirm the operation when ready.
 
 Keeping independent backups of important files is recommended.
 
@@ -282,6 +338,7 @@ smart-file-manager/
 |
 +-- smart_file_manager/
 |   +-- __main__.py
+|   +-- main.py
 |   +-- app.py
 |   +-- config.py
 |   +-- categorization.py
