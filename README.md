@@ -196,5 +196,13 @@ pip install -r requirements.txt
 #### 5. Run Smart File Manager
 
 ```bash
-python o
+python -m smart_file_manager.main
 ```
+
+## Thank You
+
+Thank you for checking out Smart File Manager.
+
+Whether you use the application, test it, report a bug, suggest an improvement, or star the repository, your support helps the project grow.
+
+Thanks for supporting Smart File Manager.
