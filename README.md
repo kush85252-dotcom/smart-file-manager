@@ -7,7 +7,6 @@ Browse, preview, organize, and manage files with clear, reviewable operations.
 Built with **Python + PyQt6**.
 
 [![Release](https://img.shields.io/github/v/release/kush85252-dotcom/smart-file-manager?display_name=tag&sort=semver)](https://github.com/kush85252-dotcom/smart-file-manager/releases)
-[![Windows 10+](https://img.shields.io/badge/Windows-10%2B-0078D6?logo=windows\&logoColor=white)](https://www.microsoft.com/windows)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python\&logoColor=white)](https://www.python.org/)
 [![PyQt6](https://img.shields.io/badge/PyQt6-Desktop-41CD52)](https://www.qt.io/qt-for-python)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
