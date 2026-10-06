@@ -134,7 +134,9 @@ The interface includes:
 * Activity information
 * Adjustable UI scaling
 
-<img src="https://github.com/user-attachments/assets/f6f5474e-98d3-4aef-ac87-badb95ddcac" alt="Smart File Manager interface">
+<img width="1920" height="1034" alt="screenshot1" src="https://github.com/user-attachments/assets/0d77d5c0-95d9-4b5c-9648-3bafe8bd2ed4" />
+<img width="1919" height="1034" alt="screenshot 2" src="https://github.com/user-attachments/assets/aa986ea2-5087-4d07-a1ff-0b2c04ac1858" />
+
 
 ## Local-First Design
 
