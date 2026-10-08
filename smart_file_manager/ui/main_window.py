@@ -527,7 +527,7 @@ class SFM_Lite(QMainWindow):
             f"<b>{APP_NAME}</b><br>"
             f"Version {VERSION}<br><br>"
             "A lightweight, local-first file manager for organizing files safely.<br><br>"
-            f'<a href="{GITHUB_URL}">GitHub</a><br>'
+            f'<a href="{GITHUB_URL}">https://github.com/kush85252-dotcom/smart-file-manager</a><br>'
             "License: not specified in this source distribution."
         )
         about_text.setOpenExternalLinks(True)

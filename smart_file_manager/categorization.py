@@ -57,6 +57,13 @@ CATEGORIES = {
     "Fonts": {
         ".ttf", ".otf", ".woff", ".woff2"
     },
+    "Scripts": {
+        ".sh", ".bat", ".ps1", ".pl", ".rb"
+    },
+
+    "Terminal": {
+        ".sh", ".zsh", ".fish", ".bash", ".bat", ".cmd", ".ps1"
+    }
 }
 
 
