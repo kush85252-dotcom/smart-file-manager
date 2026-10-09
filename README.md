@@ -6,7 +6,7 @@ Browse, preview, organize, and manage files with clear, reviewable operations.
 
 Built with **Python + PyQt6**.
 
-[![Release](https://img.shields.io/github/v/release/kush85252-dotcom/smart-file-manager?display_name=tag&sort=semver)](https://github.com/kush85252-dotcom/smart-file-manager/releases)
+[![Release](https://img.shields.io/github/v/release/kush85252-dotcom/smart-file-manager?display_name=tag\&sort=semver)](https://github.com/kush85252-dotcom/smart-file-manager/releases)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python\&logoColor=white)](https://www.python.org/)
 [![PyQt6](https://img.shields.io/badge/PyQt6-Desktop-41CD52)](https://pypi.org/project/PyQt6/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -19,10 +19,10 @@ Smart File Manager is a Windows desktop application for browsing, organizing, pr
 
 It uses **local, deterministic, rule-based file detection** and keeps file operations visible so changes can be reviewed before they are applied.
 
-### Features
+## Features
 
 * File Explorer
-* 1-Time Scan
+* One-time folder scanning
 * Organizing Mode
 * File Preview
 * Operation Preview
@@ -56,7 +56,7 @@ File detection is deterministic and rule-based, keeping categorization predictab
 
 ## Scanning & Organization
 
-### 1-Time Scan
+### One-Time Scan
 
 Scan a selected folder once to detect and analyze the files inside it.
 
@@ -71,7 +71,7 @@ Before changes are made, planned operations can be reviewed and confirmed.
 ```text
 Select Folder
      ↓
-1-Time Scan
+One-Time Scan
      ↓
 Detect & Categorize
      ↓
@@ -119,14 +119,14 @@ Available settings include:
 * Light theme
 * Dark theme
 * UI scaling
-* Hidden file visibility
+* Hidden-file visibility
 
 Settings are preserved between application launches.
 
 The interface includes:
 
 * File Explorer
-* 1-Time Scan
+* One-Time Scan
 * Organizing Mode
 * File Preview
 * Settings
@@ -134,19 +134,19 @@ The interface includes:
 * Activity information
 * Adjustable UI scaling
 
-<img width="1920" height="1034" alt="screenshot1" src="https://github.com/user-attachments/assets/0d77d5c0-95d9-4b5c-9648-3bafe8bd2ed4" />
-<img width="1919" height="1034" alt="screenshot 2" src="https://github.com/user-attachments/assets/aa986ea2-5087-4d07-a1ff-0b2c04ac1858" />
+<img width="1920" height="1034" alt="Smart File Manager screenshot 1" src="https://github.com/user-attachments/assets/0d77d5c0-95d9-4b5c-9648-3bafe8bd2ed4" />
 
+<img width="1919" height="1034" alt="Smart File Manager screenshot 2" src="https://github.com/user-attachments/assets/aa986ea2-5087-4d07-a1ff-0b2c04ac1858" />
 
 ## Local-First Design
 
 Smart File Manager is designed to keep file management local and transparent.
 
-* File categorization is deterministic and rule-based
-* File operations happen locally on your Windows PC
-* No cloud backend is required
-* Planned operations can be reviewed before changes are made
-* Supported operations can be undone
+* File categorization is deterministic and rule-based.
+* File operations happen locally on your Windows PC.
+* No cloud backend is required.
+* Planned operations can be reviewed before changes are made.
+* Supported operations can be undone.
 
 The goal is simple: **make file management easier while keeping the user in control.**
 
@@ -155,7 +155,7 @@ The goal is simple: **make file management easier while keeping the user in cont
 ### Requirements
 
 * Windows 10 or newer
-* Python 3.10+
+* Python 3.10 or newer
 * Git
 
 Check your Python version:
@@ -185,4 +185,93 @@ python -m venv .venv
 .venv\Scripts\activate
 ```
 
-**PowerShe**
+**PowerShell:**
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+### Install Dependencies
+
+Install PyQt6:
+
+```bash
+python -m pip install PyQt6
+```
+
+### Run the Application
+
+From the repository root, run:
+
+```bash
+python -m smart_file_manager.main
+```
+
+## Download
+
+Want to use the application without setting up a Python environment?
+
+Visit the [GitHub Releases page](https://github.com/kush85252-dotcom/smart-file-manager/releases) to find available Windows executables and release notes.
+
+## Project Structure
+
+The project is organized around the main application package.
+
+```text
+smart-file-manager/
+├── smart_file_manager/
+│   ├── main.py
+│   └── ...
+├── README.md
+├── LICENSE
+└── SECURITY.md
+```
+
+The exact project structure may vary between releases.
+
+## Technology Stack
+
+| Technology | Purpose                     |
+| ---------- | --------------------------- |
+| Python     | Application logic           |
+| PyQt6      | Desktop graphical interface |
+| JSON       | Persistent configuration    |
+| Git        | Version control             |
+| Windows    | Target platform             |
+
+## Contributing
+
+Contributions, bug reports, and suggestions are welcome.
+
+To contribute:
+
+1. Fork the repository.
+2. Create a branch for your changes.
+3. Implement and test your changes.
+4. Open a pull request describing your contribution.
+
+Please keep changes focused and preserve Smart File Manager's local-first approach.
+
+## Security
+
+If you discover a security vulnerability, please review [SECURITY.md](SECURITY.md) for reporting guidance.
+
+## License
+
+Smart File Manager is released under the [MIT License](LICENSE).
+
+## Author
+
+Created and maintained by [Kush](https://github.com/kush85252-dotcom).
+
+## Support the Project
+
+If you find Smart File Manager useful, consider starring the repository on GitHub. Your support helps others discover the project.
+
+[Visit Smart File Manager on GitHub](https://github.com/kush85252-dotcom/smart-file-manager)
+
+---
+
+**Smart File Manager**
+
+Local-first file management for Windows.
