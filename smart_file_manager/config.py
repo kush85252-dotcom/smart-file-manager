@@ -2,16 +2,27 @@
 
 from __future__ import annotations
 
+import copy
 import json
+import logging
 import os
+import shutil
 import sys
+import time
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import Any
 
-APP_NAME = "SFM 2.0"
-VERSION = "2.0"
+APP_NAME = "Smart File Manager"
+VERSION = "2.1"
 GITHUB_URL = "https://github.com/"
+
+logger = logging.getLogger(__name__)
+
+# Limits for the user-data lists added in 2.1.
+MAX_FAVORITES = 200
+RECENT_LIMIT_CHOICES = (10, 20, 50, 100)
+DEFAULT_RECENT_LIMIT = 20
 
 DEFAULT_SETTINGS: dict[str, Any] = {
     "start_with_windows": False,
@@ -27,6 +38,10 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     "use_recycle_bin": True,
     "show_notifications": True,
     "activity_logging": True,
+    # --- added in 2.1 (older settings files simply lack these keys) ---
+    "favorites": [],
+    "recent_folders": [],
+    "recent_limit": DEFAULT_RECENT_LIMIT,
 }
 
 BOOL_SETTINGS = {
@@ -41,6 +56,14 @@ BOOL_SETTINGS = {
     "show_notifications",
     "activity_logging",
 }
+
+# User data (not preferences): "Reset to Defaults" must never wipe these.
+USER_DATA_KEYS = ("favorites", "recent_folders")
+
+
+def default_settings() -> dict[str, Any]:
+    """Return a fresh copy of the defaults (the lists must not be shared)."""
+    return copy.deepcopy(DEFAULT_SETTINGS)
 
 
 def default_start_folder() -> Path:
@@ -73,9 +96,32 @@ def activity_log_path() -> Path:
     return settings_directory() / "activity.log"
 
 
+def _clean_path_list(value: object, limit: int) -> list[str]:
+    """Keep only non-empty path strings, without duplicates, up to ``limit``."""
+    if not isinstance(value, list):
+        return []
+    # Imported here to keep config.py importable without the services package
+    # having side effects at import time.
+    from .services.folder_lists import path_key
+
+    cleaned: list[str] = []
+    seen: set[str] = set()
+    for item in value:
+        if not isinstance(item, str) or not item.strip():
+            continue
+        key = path_key(item)
+        if key in seen:
+            continue
+        seen.add(key)
+        cleaned.append(item)
+        if len(cleaned) >= limit:
+            break
+    return cleaned
+
+
 def _valid_settings(data: object) -> dict[str, Any]:
     """Merge untrusted or old JSON with safe defaults."""
-    result = dict(DEFAULT_SETTINGS)
+    result = default_settings()
     if not isinstance(data, dict):
         return result
 
@@ -89,6 +135,15 @@ def _valid_settings(data: object) -> dict[str, Any]:
         result["theme"] = data["theme"]
     if isinstance(data.get("ui_scale"), int) and data["ui_scale"] in {100, 110, 125, 150}:
         result["ui_scale"] = data["ui_scale"]
+
+    limit = data.get("recent_limit")
+    if isinstance(limit, int) and not isinstance(limit, bool) and 1 <= limit <= 100:
+        result["recent_limit"] = limit
+
+    result["favorites"] = _clean_path_list(data.get("favorites"), MAX_FAVORITES)
+    result["recent_folders"] = _clean_path_list(
+        data.get("recent_folders"), result["recent_limit"]
+    )
     return result
 
 
@@ -97,17 +152,43 @@ class AppConfig:
 
     def __init__(self, path: Path | None = None):
         self.path = Path(path) if path else settings_path()
-        self.values = dict(DEFAULT_SETTINGS)
+        self.values = default_settings()
         self.load()
 
     def load(self) -> None:
         try:
-            self.values = _valid_settings(json.loads(self.path.read_text(encoding="utf-8")))
-        except (OSError, ValueError, TypeError):
-            self.values = dict(DEFAULT_SETTINGS)
+            text = self.path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            self.values = default_settings()
+            return
+        except OSError as error:
+            logger.warning("Could not read settings file: %s", error)
+            self.values = default_settings()
+            return
+
+        try:
+            self.values = _valid_settings(json.loads(text))
+        except (ValueError, TypeError):
+            logger.warning("Settings file is malformed; using defaults.")
+            self.values = default_settings()
+            self._back_up_malformed_file()
+
+    def _back_up_malformed_file(self) -> None:
+        """Keep a copy of an unreadable settings file before it is replaced.
+
+        The next ``save()`` overwrites ``settings.json`` with defaults; without
+        this copy the user's old favorites and preferences would be lost.
+        """
+        backup = self.path.with_name(f"{self.path.name}.corrupt-{time.strftime('%Y%m%d-%H%M%S')}")
+        try:
+            shutil.copy2(self.path, backup)
+        except OSError as error:
+            logger.warning("Could not back up malformed settings file: %s", error)
 
     def get(self, key: str) -> Any:
-        return self.values.get(key, DEFAULT_SETTINGS.get(key))
+        value = self.values.get(key, DEFAULT_SETTINGS.get(key))
+        # Hand out copies of lists so callers cannot mutate stored state.
+        return list(value) if isinstance(value, list) else value
 
     def set(self, key: str, value: Any) -> None:
         if key in DEFAULT_SETTINGS:
@@ -116,16 +197,31 @@ class AppConfig:
     def save(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         # Replace the file atomically so an interrupted write cannot corrupt it.
-        with NamedTemporaryFile(
-            "w", encoding="utf-8", dir=self.path.parent, delete=False
-        ) as temporary:
-            json.dump(self.values, temporary, indent=2)
-            temporary.write("\n")
-            temporary_path = Path(temporary.name)
-        temporary_path.replace(self.path)
+        temporary_path: Path | None = None
+        try:
+            with NamedTemporaryFile(
+                "w", encoding="utf-8", dir=self.path.parent, delete=False,
+                prefix=f"{self.path.name}.", suffix=".tmp",
+            ) as temporary:
+                temporary_path = Path(temporary.name)
+                json.dump(self.values, temporary, indent=2)
+                temporary.write("\n")
+                temporary.flush()
+                os.fsync(temporary.fileno())
+            temporary_path.replace(self.path)
+            temporary_path = None
+        finally:
+            if temporary_path is not None:
+                try:
+                    temporary_path.unlink()
+                except OSError:
+                    pass
 
     def reset(self) -> None:
-        self.values = dict(DEFAULT_SETTINGS)
+        """Restore preferences to defaults but keep favorites and recents."""
+        kept = {key: self.values.get(key) for key in USER_DATA_KEYS}
+        self.values = default_settings()
+        self.values.update(kept)
         self.save()
 
 
@@ -144,7 +240,7 @@ def apply_startup_setting(enabled: bool) -> tuple[bool, str]:
             startup_dir.mkdir(parents=True, exist_ok=True)
             if getattr(sys, "frozen", False):
                 command = f'"{sys.executable}"'
-                lines = [f"@echo off", command]
+                lines = ["@echo off", command]
             else:
                 command = f'"{sys.executable}" -m smart_file_manager'
                 lines = ["@echo off", f'cd /d "{Path.cwd()}"', command]

@@ -34,6 +34,8 @@ from ..categorization import category_for
 from ..config import (
     APP_NAME,
     GITHUB_URL,
+    MAX_FAVORITES,
+    RECENT_LIMIT_CHOICES,
     VERSION,
     AppConfig,
     apply_startup_setting,
@@ -46,13 +48,27 @@ from ..services.file_operations import (
     open_file as open_file_operation,
     rename_path,
 )
+from ..services.folder_lists import (
+    add_favorite,
+    folder_exists,
+    push_recent,
+    remove_favorite,
+)
 from ..services.organizer import (
     build_organize_plan as build_organize_plan_service,
     organize_plan,
     undo_operation,
 )
+from ..services.scanner import iter_files
 from ..utils import format_size, modified_date
+from .folder_list_page import FolderListPage
+from .monitor_page import MonitorPage
+from .scan_panel import ScanPanel
 from .styles import LIGHT_STYLESHEET, STYLESHEET
+
+# Stack positions.  The first four keep their original order.
+PAGE_OVERVIEW, PAGE_FILES, PAGE_ORGANIZE, PAGE_SETTINGS = 0, 1, 2, 3
+PAGE_FAVORITES, PAGE_RECENT, PAGE_MONITOR = 4, 5, 6
 
 
 class SFM_Lite(QMainWindow):
@@ -63,6 +79,7 @@ class SFM_Lite(QMainWindow):
 
         self.setWindowTitle(f"{APP_NAME} {VERSION}")
         self.resize(1150, 700)
+        self.setMinimumSize(900, 620)
         self.config = config or AppConfig()
         self.logger = logging.getLogger(__name__)
         self.settings_widgets = {}
@@ -82,7 +99,9 @@ class SFM_Lite(QMainWindow):
         self.build_ui()
         self.apply_style()
 
-        self.navigate_to(self.current_folder, save_history=True)
+        # The start-up folder is not a user "visit", so it is not added to Recent.
+        self.navigate_to(self.current_folder, save_history=True, record_recent=False)
+        self.refresh_folder_lists()
 
     # ========================================================
     # UI
@@ -107,30 +126,42 @@ class SFM_Lite(QMainWindow):
         sidebar_layout = QVBoxLayout(sidebar)
         sidebar_layout.setContentsMargins(15, 20, 15, 20)
 
-        title = QLabel("SFM 2.0")
+        title = QLabel(f"SFM {VERSION}")
         title.setObjectName("appTitle")
 
-        version = QLabel("Smart File Manager 2.0")
+        version = QLabel(f"{APP_NAME} {VERSION}")
         version.setObjectName("version")
 
         sidebar_layout.addWidget(title)
         sidebar_layout.addWidget(version)
         sidebar_layout.addSpacing(25)
 
-        self.dashboard_button = self.sidebar_button("📊  Dashboard")
+        # "dashboard_button"/"dashboard_page" keep their original attribute
+        # names; the page is now labelled Overview.
+        self.dashboard_button = self.sidebar_button("📊  Overview")
         self.files_button = self.sidebar_button("📁  Files")
         self.organize_button = self.sidebar_button("🧹  Organize")
+        self.favorites_button = self.sidebar_button("⭐  Favorites")
+        self.recent_button = self.sidebar_button("🕘  Recent Folders")
+        self.monitor_button = self.sidebar_button("📡  Live Monitor")
         self.settings_button = self.sidebar_button("⚙  Settings")
 
-        sidebar_layout.addWidget(self.dashboard_button)
-        sidebar_layout.addWidget(self.files_button)
-        sidebar_layout.addWidget(self.organize_button)
-        sidebar_layout.addWidget(self.settings_button)
+        self.nav_buttons = {
+            PAGE_OVERVIEW: self.dashboard_button,
+            PAGE_FILES: self.files_button,
+            PAGE_ORGANIZE: self.organize_button,
+            PAGE_FAVORITES: self.favorites_button,
+            PAGE_RECENT: self.recent_button,
+            PAGE_MONITOR: self.monitor_button,
+            PAGE_SETTINGS: self.settings_button,
+        }
+        for button in self.nav_buttons.values():
+            sidebar_layout.addWidget(button)
 
         sidebar_layout.addStretch()
 
         info = QLabel(
-            "SFM 2.0\n"
+            f"SFM {VERSION}\n"
             "Fast • Simple • Safe"
         )
         info.setObjectName("sidebarInfo")
@@ -147,29 +178,34 @@ class SFM_Lite(QMainWindow):
         self.files_page = self.create_files_page()
         self.organize_page = self.create_organize_page()
         self.settings_page = self.create_settings_page()
+        self.favorites_page = self.create_favorites_page()
+        self.recent_page = self.create_recent_page()
+        self.monitor_page = MonitorPage(lambda: self.current_folder)
 
-        self.stack.addWidget(self.dashboard_page)
-        self.stack.addWidget(self.files_page)
-        self.stack.addWidget(self.organize_page)
-        self.stack.addWidget(self.settings_page)
+        # Order must match the PAGE_* constants above.
+        for page in (
+            self.dashboard_page, self.files_page, self.organize_page,
+            self.settings_page, self.favorites_page, self.recent_page,
+            self.monitor_page,
+        ):
+            self.stack.addWidget(page)
 
-        self.dashboard_button.clicked.connect(
-            lambda: self.stack.setCurrentIndex(0)
-        )
-
-        self.files_button.clicked.connect(
-            lambda: self.stack.setCurrentIndex(1)
-        )
-
-        self.organize_button.clicked.connect(
-            lambda: self.stack.setCurrentIndex(2)
-        )
-        self.settings_button.clicked.connect(
-            lambda: self.stack.setCurrentIndex(3)
-        )
+        for index, button in self.nav_buttons.items():
+            button.clicked.connect(lambda _checked=False, i=index: self.show_page(i))
 
         main_layout.addWidget(sidebar)
-        main_layout.addWidget(self.stack)
+        main_layout.addWidget(self.stack, 1)
+        self.show_page(PAGE_OVERVIEW)
+
+    def show_page(self, index):
+        """Switch page and mark the matching sidebar button as current."""
+        if index in (PAGE_FAVORITES, PAGE_RECENT):
+            self.refresh_folder_lists()  # re-check which folders still exist
+        self.stack.setCurrentIndex(index)
+        for page_index, button in self.nav_buttons.items():
+            button.setProperty("current", page_index == index)
+            button.style().unpolish(button)
+            button.style().polish(button)
 
     # ========================================================
     # SIDEBAR BUTTON
@@ -192,7 +228,7 @@ class SFM_Lite(QMainWindow):
         layout.setContentsMargins(30, 30, 30, 30)
         layout.setSpacing(20)
 
-        heading = QLabel("Dashboard")
+        heading = QLabel("Overview")
         heading.setObjectName("heading")
 
         self.location_label = QLabel()
@@ -223,9 +259,20 @@ class SFM_Lite(QMainWindow):
         self.category_label.setObjectName("categoryInfo")
 
         layout.addWidget(self.category_label)
+
+        self.scan_panel = ScanPanel(
+            folder_provider=lambda: self.current_folder,
+            hidden_provider=lambda: bool(self.config.get("show_hidden_files")),
+        )
+        layout.addWidget(self.scan_panel)
         layout.addStretch()
 
-        return page
+        # Scrollable so the scan results stay reachable on small screens.
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
+        scroll.setWidget(page)
+        return scroll
 
     # ========================================================
     # CARD
@@ -465,6 +512,20 @@ class SFM_Lite(QMainWindow):
         organization.layout().addLayout(mode_row)
         layout.addWidget(organization)
 
+        recent_row = QHBoxLayout()
+        recent_label = QLabel("Recent folders to remember")
+        recent_label.setMinimumWidth(250)
+        recent_combo = QComboBox()
+        for value in RECENT_LIMIT_CHOICES:
+            recent_combo.addItem(str(value), value)
+        recent_combo.currentIndexChanged.connect(
+            lambda: self.save_combo_setting("recent_limit", recent_combo)
+        )
+        self.settings_widgets["recent_limit"] = recent_combo
+        recent_row.addWidget(recent_label)
+        recent_row.addWidget(recent_combo, 1)
+        general.layout().addLayout(recent_row)
+
         appearance = self.settings_section("Appearance")
         theme_row = QHBoxLayout()
         theme_label = QLabel("Theme")
@@ -603,6 +664,11 @@ class SFM_Lite(QMainWindow):
                     self.settings_status.setText(f"Could not update Windows startup: {message}")
             elif key == "activity_logging":
                 configure_logging(bool(value))
+            elif key == "recent_limit":
+                trimmed = self.config.get("recent_folders")[: int(value)]
+                self.config.set("recent_folders", trimmed)
+                self.config.save()
+                self.refresh_folder_lists()
             elif key in {"show_hidden_files", "scan_subfolders"}:
                 self.refresh()
             elif key in {"theme", "ui_scale"}:
@@ -620,10 +686,11 @@ class SFM_Lite(QMainWindow):
         )
         if answer != QMessageBox.StandardButton.Yes:
             return
-        self.config.reset()
+        self.config.reset()  # keeps favorites and recent folders
         self.load_settings_into_widgets()
         self.apply_style()
         self.refresh()
+        self.refresh_folder_lists()
         if os.name == "nt":
             apply_startup_setting(False)
         configure_logging(True)
@@ -633,11 +700,13 @@ class SFM_Lite(QMainWindow):
     # NAVIGATION
     # ========================================================
 
-    def navigate_to(self, folder, save_history=True):
+    def navigate_to(self, folder, save_history=True, record_recent=True):
         folder = Path(folder)
 
         if not folder.exists() or not folder.is_dir():
             return
+
+        previous = (self.current_folder, list(self.history), self.history_index)
 
         if save_history:
             # Remove future history
@@ -648,9 +717,16 @@ class SFM_Lite(QMainWindow):
             self.history_index += 1
 
         self.current_folder = folder
-        self.load_folder()
+        if not self.load_folder():
+            # Could not open it (e.g. permission denied): stay where we were
+            # instead of leaving the window pointing at an unreadable folder.
+            self.current_folder, self.history, self.history_index = previous
+            return
+        if record_recent:
+            self.record_recent_folder(folder)
 
     def load_folder(self):
+        """Show the current folder.  Returns True if it could be listed."""
         try:
             items = list(self.current_folder.iterdir())
         except PermissionError:
@@ -659,14 +735,15 @@ class SFM_Lite(QMainWindow):
                 "Permission denied",
                 "You don't have permission to open this folder."
             )
-            return
+            return False
         except OSError as error:
+            self.logger.warning("Could not list %s: %s", self.current_folder, error)
             QMessageBox.warning(
                 self,
                 "Couldn't open folder",
                 str(error)
             )
-            return
+            return False
 
         if not self.config.get("show_hidden_files"):
             items = [item for item in items if not is_hidden(item)]
@@ -696,6 +773,7 @@ class SFM_Lite(QMainWindow):
             self.current_folder.parent != self.current_folder
         )
         self.status_label.setText(f"{len(self.files)} items")
+        return True
 
     # ========================================================
     # DISPLAY FILES
@@ -811,7 +889,8 @@ class SFM_Lite(QMainWindow):
 
         self.history_index -= 1
         self.current_folder = self.history[self.history_index]
-        self.load_folder()
+        if self.load_folder():
+            self.record_recent_folder(self.current_folder)
 
     def go_forward(self):
         if self.history_index >= len(self.history) - 1:
@@ -819,7 +898,8 @@ class SFM_Lite(QMainWindow):
 
         self.history_index += 1
         self.current_folder = self.history[self.history_index]
-        self.load_folder()
+        if self.load_folder():
+            self.record_recent_folder(self.current_folder)
 
     def go_up(self):
         parent = self.current_folder.parent
@@ -908,7 +988,7 @@ class SFM_Lite(QMainWindow):
 
         # A rename must stay inside the current directory.  Explicitly reject
         # path separators so a user cannot turn the rename field into a move.
-        if new_name in {".", ".."} or "/" in new_name or "\\\\" in new_name:
+        if new_name in {".", ".."} or "/" in new_name or "\\" in new_name:
             QMessageBox.warning(
                 self,
                 "Invalid name",
@@ -1026,15 +1106,12 @@ class SFM_Lite(QMainWindow):
     def build_organize_plan(self):
         files = self.files
         if self.config.get("scan_subfolders"):
-            files = []
-            try:
-                for path in self.current_folder.rglob("*"):
-                    if path.is_file() and (
-                        self.config.get("show_hidden_files") or not is_hidden(path)
-                    ):
-                        files.append(path)
-            except OSError as error:
-                self.logger.warning("Could not scan subfolders: %s", error)
+            # iter_files never follows directory symlinks/junctions and skips
+            # unreadable folders instead of failing.
+            files = list(iter_files(
+                self.current_folder,
+                include_hidden=bool(self.config.get("show_hidden_files")),
+            ))
         return build_organize_plan_service(
             files,
             self.current_folder,
@@ -1126,6 +1203,142 @@ class SFM_Lite(QMainWindow):
         self.status_label.setText(message.split("\n", 1)[0])
         if self.config.get("show_notifications"):
             QMessageBox.information(self, title, message)
+
+    # ========================================================
+    # FAVORITES / RECENT FOLDERS
+    # ========================================================
+
+    def create_favorites_page(self):
+        page = FolderListPage(
+            "Favorites",
+            "Folders you want one click away. They are saved between sessions.",
+            "No favorites yet. Open a folder in Files, then choose 'Add Current Folder'.",
+            allow_add=True,
+        )
+        page.add_current_requested.connect(
+            lambda: self.add_favorite_folder(self.current_folder)
+        )
+        page.add_folder_requested.connect(self.add_favorite_from_dialog)
+        page.open_requested.connect(
+            lambda path: self.open_folder_from_list(path, "Favorites")
+        )
+        page.remove_requested.connect(self.remove_favorite_folder)
+        return page
+
+    def create_recent_page(self):
+        page = FolderListPage(
+            "Recent Folders",
+            "Folders you opened recently, newest first. Only folders are tracked, never files.",
+            "No recent folders yet. Folders you open in Files appear here.",
+            allow_clear=True,
+        )
+        page.open_requested.connect(
+            lambda path: self.open_folder_from_list(path, "Recent Folders")
+        )
+        page.remove_requested.connect(self.remove_recent_folder)
+        page.clear_requested.connect(self.clear_recent_folders)
+        return page
+
+    def refresh_folder_lists(self):
+        self.favorites_page.set_paths(self.config.get("favorites"))
+        self.recent_page.set_paths(self.config.get("recent_folders"))
+
+    def save_folder_lists(self):
+        """Persist favorites/recents; a failed write must never block the UI."""
+        try:
+            self.config.save()
+        except OSError as error:
+            self.logger.warning("Could not save folder lists: %s", error)
+
+    def record_recent_folder(self, folder):
+        updated = push_recent(
+            self.config.get("recent_folders"),
+            str(folder),
+            self.config.get("recent_limit"),
+        )
+        self.config.set("recent_folders", updated)
+        self.save_folder_lists()
+        self.recent_page.set_paths(updated)
+
+    def add_favorite_from_dialog(self):
+        chosen = QFileDialog.getExistingDirectory(
+            self, "Choose a folder to add to Favorites", str(self.current_folder)
+        )
+        if chosen:
+            self.add_favorite_folder(Path(chosen))
+
+    def add_favorite_folder(self, folder):
+        favorites = self.config.get("favorites")
+        updated, added = add_favorite(favorites, str(folder), MAX_FAVORITES)
+        if added:
+            self.config.set("favorites", updated)
+            self.save_folder_lists()
+            message = f"Added to Favorites: {folder}"
+        elif len(favorites) >= MAX_FAVORITES:
+            message = f"Favorites is full ({MAX_FAVORITES} folders). Remove one first."
+        else:
+            message = "That folder is already in Favorites."
+        self.favorites_page.set_paths(self.config.get("favorites"))
+        self.favorites_page.status_label.setText(message)
+
+    def remove_favorite_folder(self, path):
+        updated, removed = remove_favorite(self.config.get("favorites"), path)
+        if removed:
+            self.config.set("favorites", updated)
+            self.save_folder_lists()
+        self.favorites_page.set_paths(updated)
+
+    def remove_recent_folder(self, path):
+        updated, removed = remove_favorite(self.config.get("recent_folders"), path)
+        if removed:
+            self.config.set("recent_folders", updated)
+            self.save_folder_lists()
+        self.recent_page.set_paths(updated)
+
+    def clear_recent_folders(self):
+        answer = QMessageBox.question(
+            self,
+            "Clear Recent Folders",
+            "Clear the list of recent folders? Your files and favorites are not affected.",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
+        )
+        if answer != QMessageBox.StandardButton.Yes:
+            return
+        self.config.set("recent_folders", [])
+        self.save_folder_lists()
+        self.recent_page.set_paths([])
+
+    def open_folder_from_list(self, path, source):
+        """Open a saved folder, or offer to drop it if it no longer exists."""
+        if not folder_exists(path):
+            answer = QMessageBox.question(
+                self,
+                "Folder not found",
+                f"This folder is missing or not reachable right now "
+                f"(it may be on a drive that is not connected):\n\n{path}\n\n"
+                f"Remove it from {source}?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No,
+            )
+            if answer == QMessageBox.StandardButton.Yes:
+                if source == "Favorites":
+                    self.remove_favorite_folder(path)
+                else:
+                    self.remove_recent_folder(path)
+            return
+        self.navigate_to(Path(path), save_history=True)
+        self.show_page(PAGE_FILES)
+
+    # ========================================================
+    # SHUTDOWN
+    # ========================================================
+
+    def closeEvent(self, event):
+        """Stop background work before the window goes away."""
+        self.monitor_page.stop_monitoring()
+        self.scan_panel.shutdown()
+        event.accept()
 
     # ========================================================
     # STYLES
