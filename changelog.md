@@ -1,26 +1,76 @@
-## v2.0.0
+# Changelog
+
+All notable changes to Smart File Manager are documented in this file.
+
+## [2.1.0] - 2026-10-09
 
 ### Added
 
-* Added a persistent Settings page backed by JSON configuration.
-* Added live theme and UI scaling changes.
-* Added Light and Dark themes.
-* Added an option to show or hide hidden files.
-* Added optional subfolder scanning.
-* Added native Trash support for deleted files.
-* Added operation preview and confirmation controls.
-* Added undo controls for supported file operations.
-* Added `smart_file_manager/main.py` as a convenient application launcher.
+* Live file monitoring.
+* Folder-based lists.
+* Additional scanning tools.
+
+### Improved
+
+* File discovery and scanning workflows.
+* Folder navigation and file management.
+* Integration with existing file-management functionality.
+
+### Maintained
+
+* Local-first file management.
+* Deterministic, rule-based file categorization.
+* Existing settings and supported file operations.
+
+## [2.0.0] - 2026-09-28
+
+### Added
+
+* Persistent Settings page backed by local JSON configuration.
+* Light and Dark themes.
+* Adjustable UI scaling.
+* Hidden-file visibility controls.
+* Optional subfolder scanning.
+* Native Trash support.
+* Operation previews and confirmation controls.
+* Undo controls for supported operations.
+* Package-based application launcher.
+
+### Improved
+
+* Settings persistence between application launches.
+* Scanning controls and configuration.
+* Project organization and development workflow.
 
 ### Changed
 
-* Improved settings handling so preferences persist between launches.
-* Improved file scanning controls.
-* Improved operation safety with clearer preview and confirmation steps.
-* Updated project files and `.gitignore` to keep build, distribution, and virtual environment files out of the repository.
+* Migrated the desktop interface to PyQt6.
+* Updated `.gitignore` to exclude build output, distribution files, and virtual environments.
 
-### Notes
+### Design
 
-* SFM remains local-first, deterministic, and rule-based.
-* No AI is required for file detection or organization.
-* Existing safety features such as preview and undo remain part of the workflow.
+* Continued focus on local-first operation.
+* Deterministic, rule-based file categorization.
+* No AI-based file categorization.
+
+## [1.5.0] - 2026-09-09
+
+### Added
+
+* Redesigned desktop interface.
+* File Explorer functionality.
+* Right-click context-menu support.
+
+### Improved
+
+* Application stability.
+* Performance and responsiveness.
+* File-management usability.
+
+### Fixed
+
+* Various issues identified during development and testing.
+
+---
+
+For earlier changes, consult the [repository commit history](https://github.com/kush85252-dotcom/smart-file-manager/commits/smart-file-manager-main).
