@@ -2,7 +2,7 @@
 
 **A modern, local-first file organizer and manager for Windows.**
 
-Browse, preview, organize, and manage files with clear, reviewable operations.
+Browse, preview, organize, monitor, scan, and manage files with clear, reviewable operations.
 
 Built with **Python + PyQt6**.
 
@@ -15,14 +15,19 @@ Built with **Python + PyQt6**.
 
 ## Overview
 
-Smart File Manager is a Windows desktop application for browsing, organizing, previewing, and managing files.
+Smart File Manager is a Windows desktop application for browsing, organizing, monitoring, previewing, and managing files.
 
 It uses **local, deterministic, rule-based file detection** and keeps file operations visible so changes can be reviewed before they are applied.
+
+Version 2.1 builds on the existing file-management experience with live monitoring, folder-based lists, and additional scanning tools.
 
 ## Features
 
 * File Explorer
 * One-time folder scanning
+* Live file monitoring
+* Folder-based lists
+* Additional scanning tools
 * Organizing Mode
 * File Preview
 * Operation Preview
@@ -34,6 +39,23 @@ It uses **local, deterministic, rule-based file detection** and keeps file opera
 * Light and Dark themes
 * Adjustable UI scaling
 * Hidden-file visibility
+* Optional subfolder scanning
+
+## What's New in 2.1
+
+### Live File Monitoring
+
+Monitor filesystem changes using the application's live-monitoring functionality, rather than relying exclusively on one-time scans.
+
+### Folder-Based Lists
+
+Work with folder-based lists to navigate and manage files in relevant locations.
+
+### Additional Scanning Tools
+
+Use the expanded scanning functionality to improve file discovery and scanning workflows.
+
+These additions build on the existing file explorer, organization tools, settings, and operation-review workflow.
 
 ## File Organization
 
@@ -58,7 +80,15 @@ File detection is deterministic and rule-based, keeping categorization predictab
 
 ### One-Time Scan
 
-Scan a selected folder once to detect and analyze the files inside it.
+Scan a selected folder to detect and analyze files within the selected location.
+
+### Live Monitoring
+
+Use live monitoring to observe filesystem changes while working with monitored locations. Monitoring behavior depends on the configured paths and application implementation.
+
+### Folder-Based Lists
+
+Use folder-based lists to work with files associated with particular folders.
 
 ### Organizing Mode
 
@@ -71,7 +101,7 @@ Before changes are made, planned operations can be reviewed and confirmed.
 ```text
 Select Folder
      ↓
-One-Time Scan
+Scan or Monitor
      ↓
 Detect & Categorize
      ↓
@@ -100,15 +130,15 @@ Review planned file operations before applying them.
 
 ### Confirmation
 
-Operations can be inspected and confirmed before changes are performed.
+Inspect and confirm supported operations before changes are performed.
 
 ### Undo
 
-Supported file operations can be reversed using the built-in undo functionality.
+Reverse supported file operations using the built-in undo functionality where available.
 
 ### Activity Information
 
-Activity information keeps file operations visible while using the application.
+View activity information about file operations while using the application.
 
 ## Settings & Interface
 
@@ -120,19 +150,11 @@ Available settings include:
 * Dark theme
 * UI scaling
 * Hidden-file visibility
+* Optional subfolder scanning
 
 Settings are preserved between application launches.
 
-The interface includes:
-
-* File Explorer
-* One-Time Scan
-* Organizing Mode
-* File Preview
-* Settings
-* File operations
-* Activity information
-* Adjustable UI scaling
+The interface includes file browsing, scanning, organization, preview, settings, and activity features.
 
 <img width="1920" height="1034" alt="Smart File Manager screenshot 1" src="https://github.com/user-attachments/assets/0d77d5c0-95d9-4b5c-9648-3bafe8bd2ed4" />
 
@@ -144,7 +166,7 @@ Smart File Manager is designed to keep file management local and transparent.
 
 * File categorization is deterministic and rule-based.
 * File operations happen locally on your Windows PC.
-* No cloud backend is required.
+* No cloud backend is required for core file-management workflows.
 * Planned operations can be reviewed before changes are made.
 * Supported operations can be undone.
 
@@ -155,7 +177,7 @@ The goal is simple: **make file management easier while keeping the user in cont
 ### Requirements
 
 * Windows 10 or newer
-* Python 3.10 or newer
+* Python 3.10 or newer, subject to the dependencies of the selected release
 * Git
 
 Check your Python version:
@@ -193,19 +215,23 @@ python -m venv .venv
 
 ### Install Dependencies
 
-Install PyQt6:
+Install the dependencies required by the selected version. If the project provides a `requirements.txt` file, use:
 
 ```bash
-python -m pip install PyQt6
+python -m pip install -r requirements.txt
 ```
+
+Otherwise, install the dependencies documented for that release.
 
 ### Run the Application
 
-From the repository root, run:
+Use the entry point provided by the checked-out version. For versions that include the following module:
 
 ```bash
 python -m smart_file_manager.main
 ```
+
+The application entry point may differ between releases.
 
 ## Download
 
@@ -220,9 +246,9 @@ The project is organized around the main application package.
 ```text
 smart-file-manager/
 ├── smart_file_manager/
-│   ├── main.py
-│   └── ...
+│   ├── ...
 ├── README.md
+├── CHANGELOG.md
 ├── LICENSE
 └── SECURITY.md
 ```
@@ -235,9 +261,10 @@ The exact project structure may vary between releases.
 | ---------- | --------------------------- |
 | Python     | Application logic           |
 | PyQt6      | Desktop graphical interface |
+| Watchdog   | Filesystem monitoring       |
 | JSON       | Persistent configuration    |
 | Git        | Version control             |
-| Windows    | Target platform             |
+| Windows    | Primary desktop platform    |
 
 ## Contributing
 
@@ -255,6 +282,10 @@ Please keep changes focused and preserve Smart File Manager's local-first approa
 ## Security
 
 If you discover a security vulnerability, please review [SECURITY.md](SECURITY.md) for reporting guidance.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for version history and documented changes.
 
 ## License
 
