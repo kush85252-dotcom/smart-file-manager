@@ -9,7 +9,6 @@ from .config import APP_NAME, VERSION, AppConfig
 from .logging_config import configure_logging, install_exception_hook
 from .ui.main_window import SFM_Lite
 
-
 def run() -> int:
     """Create and run the Smart File Manager application."""
     config = AppConfig()
