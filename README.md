@@ -299,7 +299,7 @@ Created and maintained by [Kush](https://github.com/kush85252-dotcom).
 
 If you find Smart File Manager useful, consider starring the repository on GitHub. Your support helps others discover the project.
 
-[Visit Smart File Manager on GitHub](https://github.com/kush85252-dotcom/smart-file-manager)
+[Vist my GitHub profile](https://github.com/kush85252-dotcom)
 
 ---
 
