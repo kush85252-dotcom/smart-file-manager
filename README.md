@@ -228,7 +228,7 @@ Otherwise, install the dependencies documented for that release.
 Use the entry point provided by the checked-out version. For versions that include the following module:
 
 ```bash
-python -m smart_file_manager.main
+python -m main.py
 ```
 
 The application entry point may differ between releases.
