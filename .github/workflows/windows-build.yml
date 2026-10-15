@@ -1,0 +1,49 @@
+
+name: SFM Windows Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sfm-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Windows executable
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install pyinstaller
+
+      - name: Check Python syntax
+        run: python -m compileall -q smart_file_manager
+
+      - name: Build executable
+        run: |
+          python -m PyInstaller --noconfirm --clean --windowed --name SmartFileManager smart_file_manager/main.py
+
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: SmartFileManager-Windows
+          path: dist/SmartFileManager/
+          if-no-files-found: error
+          retention-days: 7
