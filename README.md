@@ -2,307 +2,180 @@
 
 **A modern, local-first file organizer and manager for Windows.**
 
-Browse, preview, organize, monitor, scan, and manage files with clear, reviewable operations.
+Browse, preview, scan, organize, monitor, and manage files with transparent workflows and reviewable operations.
 
-Built with **Python + PyQt6**.
+Built with **Python and PyQt6**.
 
-[![Release](https://img.shields.io/github/v/release/kush85252-dotcom/smart-file-manager?display_name=tag\&sort=semver)](https://github.com/kush85252-dotcom/smart-file-manager/releases)
-[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python\&logoColor=white)](https://www.python.org/)
+[![Release](https://img.shields.io/github/v/release/kush85252-dotcom/smart-file-manager?display_name=tag&sort=semver)](https://github.com/kush85252-dotcom/smart-file-manager/releases)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![PyQt6](https://img.shields.io/badge/PyQt6-Desktop-41CD52)](https://pypi.org/project/PyQt6/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-<img src="https://github.com/user-attachments/assets/9536da34-bbfa-43b7-96e0-cb250c932c2e" alt="Smart File Manager">
+<img src="https://github.com/user-attachments/assets/9536da34-bbfa-43b7-96e0-cb250c932c2e" alt="Smart File Manager application preview">
 
 ## Overview
 
-Smart File Manager is a Windows desktop application for browsing, organizing, monitoring, previewing, and managing files.
+Smart File Manager is a Windows desktop application designed to simplify file browsing, organization, monitoring, and management.
 
-It uses **local, deterministic, rule-based file detection** and keeps file operations visible so changes can be reviewed before they are applied.
+It uses **deterministic, rule-based file categorization** to keep file detection predictable and local. Its review-oriented workflow helps users inspect planned operations before applying changes, with confirmation and undo support for eligible operations.
 
-Version 2.1 builds on the existing file-management experience with live monitoring, folder-based lists, and additional scanning tools.
+Version 2.1 expands the existing file-management experience with live filesystem monitoring, folder-based lists, and additional scanning capabilities.
 
 ## Features
 
-* File Explorer
-* One-time folder scanning
-* Live file monitoring
-* Folder-based lists
-* Additional scanning tools
-* Organizing Mode
-* File Preview
-* Operation Preview
-* Confirmation controls
-* Undo for supported operations
-* Collision-aware file operations
-* Activity information
-* Persistent Settings
-* Light and Dark themes
-* Adjustable UI scaling
-* Hidden-file visibility
-* Optional subfolder scanning
+- **File Explorer:** Browse files and access supported file-management operations.
+- **Folder Scanning:** Scan selected directories to identify and categorize files.
+- **Live Monitoring:** Monitor filesystem changes in supported locations.
+- **Folder-Based Lists:** Work with files associated with relevant folders.
+- **Organizing Mode:** Organize files according to their detected categories.
+- **File Preview:** Preview supported files before taking action.
+- **Operation Preview:** Review planned changes before applying them.
+- **Confirmation Controls:** Retain control over supported file operations.
+- **Undo Support:** Reverse eligible operations where supported.
+- **Collision-Aware Operations:** Account for existing filenames during file operations.
+- **Activity Information:** Review information about application activity.
+- **Persistent Settings:** Preserve configuration between launches.
+- **Theme Options:** Switch between light and dark themes.
+- **Adjustable Interface:** Customize UI scaling.
+- **Hidden-File Visibility:** Choose whether hidden files are displayed.
+- **Optional Subfolder Scanning:** Configure scanning to include subdirectories.
 
-## What's New in 2.1
+## What's New in Version 2.1
 
-### Live File Monitoring
+### Live Filesystem Monitoring
 
-Monitor filesystem changes using the application's live-monitoring functionality, rather than relying exclusively on one-time scans.
+Monitor changes in supported locations without relying exclusively on one-time scans.
 
 ### Folder-Based Lists
 
-Work with folder-based lists to navigate and manage files in relevant locations.
+Work with files grouped or presented according to their associated folders.
 
 ### Additional Scanning Tools
 
-Use the expanded scanning functionality to improve file discovery and scanning workflows.
+Use expanded scanning capabilities to support file discovery and scanning workflows.
 
-These additions build on the existing file explorer, organization tools, settings, and operation-review workflow.
+These additions build on the existing file explorer, organization tools, configuration options, and operation-review workflow.
 
-## File Organization
+## File Categorization
 
-Smart File Manager organizes files according to their file types and extensions.
+Smart File Manager categorizes files using deterministic rules based on file types and extensions.
 
-| Category     | Examples                      |
-| ------------ | ----------------------------- |
-| Documents    | `.pdf`, `.docx`, `.txt`       |
-| Images       | `.png`, `.jpg`, `.webp`       |
-| Videos       | `.mp4`, `.mkv`, `.avi`        |
-| Audio        | `.mp3`, `.wav`, `.flac`       |
-| Archives     | `.zip`, `.7z`, `.rar`         |
-| Applications | `.exe`, `.msi`                |
-| Android APKs | `.apk`                        |
-| Scripts      | `.bat`, `.ps1`, `.sh`         |
-| Code         | `.py`, `.cpp`, `.js`, `.html` |
-| Others       | Unrecognized file types       |
+| Category | Examples |
+| --- | --- |
+| Documents | `.pdf`, `.docx`, `.txt` |
+| Images | `.png`, `.jpg`, `.webp` |
+| Videos | `.mp4`, `.mkv`, `.avi` |
+| Audio | `.mp3`, `.wav`, `.flac` |
+| Archives | `.zip`, `.7z`, `.rar` |
+| Applications | `.exe`, `.msi` |
+| Android APKs | `.apk` |
+| Scripts | `.bat`, `.ps1`, `.sh` |
+| Code | `.py`, `.cpp`, `.js`, `.html` |
+| Others | Unrecognized file types |
 
-File detection is deterministic and rule-based, keeping categorization predictable and local.
+Categorization is handled through local rules rather than AI-based classification, keeping the process predictable and straightforward.
 
-## Scanning & Organization
+## Scanning and Organization
 
-### One-Time Scan
+### One-Time Scanning
 
-Scan a selected folder to detect and analyze files within the selected location.
+Select a folder to scan its contents and identify files that can be categorized by the application.
 
 ### Live Monitoring
 
-Use live monitoring to observe filesystem changes while working with monitored locations. Monitoring behavior depends on the configured paths and application implementation.
+Monitor supported filesystem locations for changes while working. Monitoring behavior depends on the configured paths and the capabilities of the selected release.
 
 ### Folder-Based Lists
 
-Use folder-based lists to work with files associated with particular folders.
+Navigate and manage files in the context of their associated folders.
 
 ### Organizing Mode
 
-Organize detected files into their appropriate categories.
-
-Before changes are made, planned operations can be reviewed and confirmed.
+Organize detected files into their corresponding categories. Review planned operations and confirm applicable changes before they are performed.
 
 ### Operation Workflow
 
 ```text
 Select Folder
-     ↓
+     |
+     v
 Scan or Monitor
-     ↓
-Detect & Categorize
-     ↓
-Review Operations
-     ↓
-Confirm
-     ↓
-Organize
+     |
+     v
+Detect and Categorize
+     |
+     v
+Review Planned Operations
+     |
+     v
+Confirm Changes
+     |
+     v
+Organize Files
 ```
 
-Smart File Manager also uses collision-aware operations to account for existing file names.
+Collision-aware handling helps account for existing filenames during supported file operations.
 
 ## File Management
 
 ### File Explorer
 
-Browse files directly inside Smart File Manager and access supported file operations from the application.
+Browse files within Smart File Manager and access supported operations from the application interface.
 
 ### File Preview
 
-Preview supported files before performing operations.
+Inspect supported files before performing relevant operations.
 
 ### Operation Preview
 
-Review planned file operations before applying them.
+Review planned file changes before committing to them.
 
-### Confirmation
+### Confirmation Controls
 
-Inspect and confirm supported operations before changes are performed.
+Confirm supported operations before changes are applied.
 
-### Undo
+### Undo Support
 
-Reverse supported file operations using the built-in undo functionality where available.
+Reverse supported file operations through the built-in undo functionality where available.
 
 ### Activity Information
 
-View activity information about file operations while using the application.
+Access information about file operations and application activity.
 
-## Settings & Interface
+## Settings and Interface
 
-Smart File Manager includes a persistent Settings page backed by JSON configuration.
+Smart File Manager includes a persistent settings system backed by JSON configuration.
 
 Available settings include:
 
-* Light theme
-* Dark theme
-* UI scaling
-* Hidden-file visibility
-* Optional subfolder scanning
+- Light and dark themes
+- Adjustable UI scaling
+- Hidden-file visibility
+- Optional subfolder scanning
 
 Settings are preserved between application launches.
 
-The interface includes file browsing, scanning, organization, preview, settings, and activity features.
+The interface brings file browsing, scanning, organization, previews, settings, and activity information together in a single desktop application.
 
-<img width="1920" height="1034" alt="Smart File Manager screenshot 1" src="https://github.com/user-attachments/assets/0d77d5c0-95d9-4b5c-9648-3bafe8bd2ed4" />
+<img width="1920" height="1034" alt="Smart File Manager screenshot 1" src="https://github.com/user-attachments/assets/0d77d5c0-95d9-4b5c-9648-3bafe8bd2ed4">
 
-<img width="1919" height="1034" alt="Smart File Manager screenshot 2" src="https://github.com/user-attachments/assets/aa986ea2-5087-4d07-a1ff-0b2c04ac1858" />
+<img width="1919" height="1034" alt="Smart File Manager screenshot 2" src="https://github.com/user-attachments/assets/aa986ea2-5087-4d07-a1ff-0b2c04ac1858">
 
 ## Local-First Design
 
-Smart File Manager is designed to keep file management local and transparent.
+Smart File Manager is designed to keep file management local, transparent, and user-controlled.
 
-* File categorization is deterministic and rule-based.
-* File operations happen locally on your Windows PC.
-* No cloud backend is required for core file-management workflows.
-* Planned operations can be reviewed before changes are made.
-* Supported operations can be undone.
+- **Local processing:** File categorization uses deterministic, rule-based logic.
+- **Local operations:** Core file-management operations are performed on the Windows PC.
+- **No cloud dependency:** Core file-management workflows do not require a cloud backend.
+- **Review before changes:** Planned operations can be inspected before being applied.
+- **Undo where supported:** Eligible operations can be reversed through the application's undo functionality.
 
-The goal is simple: **make file management easier while keeping the user in control.**
+The guiding principle is simple: **make file management easier without taking control away from the user.**
 
 ## Installation
 
 ### Requirements
 
-* Windows 10 or newer
-* Python 3.10 or newer, subject to the dependencies of the selected release
-* Git
-
-Check your Python version:
-
-```bash
-python --version
-```
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/kush85252-dotcom/smart-file-manager.git
-cd smart-file-manager
-```
-
-### Create a Virtual Environment
-
-```bash
-python -m venv .venv
-```
-
-### Activate the Environment
-
-**Command Prompt:**
-
-```bat
-.venv\Scripts\activate
-```
-
-**PowerShell:**
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-### Install Dependencies
-
-Install the dependencies required by the selected version. If the project provides a `requirements.txt` file, use:
-
-```bash
-python -m pip install -r requirements.txt
-```
-
-Otherwise, install the dependencies documented for that release.
-
-### Run the Application
-
-Use the entry point provided by the checked-out version. For versions that include the following module:
-
-```bash
-python -m main.py
-```
-
-The application entry point may differ between releases.
-
-## Download
-
-Want to use the application without setting up a Python environment?
-
-Visit the [GitHub Releases page](https://github.com/kush85252-dotcom/smart-file-manager/releases) to find available Windows executables and release notes.
-
-## Project Structure
-
-The project is organized around the main application package.
-
-```text
-smart-file-manager/
-├── smart_file_manager/
-│   ├── ...
-├── README.md
-├── CHANGELOG.md
-├── LICENSE
-└── SECURITY.md
-```
-
-The exact project structure may vary between releases.
-
-## Technology Stack
-
-| Technology | Purpose                     |
-| ---------- | --------------------------- |
-| Python     | Application logic           |
-| PyQt6      | Desktop graphical interface |
-| Watchdog   | Filesystem monitoring       |
-| JSON       | Persistent configuration    |
-| Git        | Version control             |
-| Windows    | Primary desktop platform    |
-
-## Contributing
-
-Contributions, bug reports, and suggestions are welcome.
-
-To contribute:
-
-1. Fork the repository.
-2. Create a branch for your changes.
-3. Implement and test your changes.
-4. Open a pull request describing your contribution.
-
-Please keep changes focused and preserve Smart File Manager's local-first approach.
-
-## Security
-
-If you discover a security vulnerability, please review [SECURITY.md](SECURITY.md) for reporting guidance.
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for version history and documented changes.
-
-## License
-
-Smart File Manager is released under the [MIT License](LICENSE).
-
-## Author
-
-Created and maintained by [Kush](https://github.com/kush85252-dotcom).
-
-## Support the Project
-
-If you find Smart File Manager useful, consider starring the repository on GitHub. Your support helps others discover the project.
-
-[Vist my GitHub profile](https://github.com/kush85252-dotcom)
-
----
-
-**Smart File Manager**
-
-Local-first file management for Windows.
+- Windows 10 or newer
+- Python
