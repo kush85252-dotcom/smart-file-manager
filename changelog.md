@@ -2,6 +2,17 @@
 
 All notable changes to Smart File Manager are documented in this file.
 
+## Version 2.2.0
+
+### Added
+- **Smart Sense** for smarter file organization assistance.
+- **Custom Rule Builder** for personalized file organization rules.
+
+### Improved
+- Expanded file organization capabilities.
+- Improved flexibility and user control over organization workflows.
+
+
 ## [2.1.0] - 2026-10-09
 
 ### Added
