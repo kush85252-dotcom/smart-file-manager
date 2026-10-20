@@ -1,12 +1,14 @@
 """Primitive filesystem operations used by the UI and organizer."""
 
 import os
+import errno
 import shutil
 import subprocess
 import sys
 import ctypes
 from ctypes import wintypes
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 
 
 def open_file(path: Path) -> None:
@@ -81,15 +83,79 @@ def send_to_recycle_bin(path: Path) -> None:
 
 
 def move_path(source: Path, destination: Path) -> None:
-    """Move a path without replacing an existing destination."""
-    shutil.move(str(source), str(destination))
+    """Move a regular file without replacing an existing destination.
+
+    Linking then unlinking gives same-volume moves an atomic no-overwrite step.
+    Across volumes, copy to a temporary file and atomically publish it before
+    removing the source.
+    """
+    source, destination = Path(source), Path(destination)
+    if source.is_symlink():
+        raise OSError(f"Refusing to move a symbolic link as a regular file: {source}")
+    if not source.is_file():
+        raise FileNotFoundError(f"Source file is unavailable: {source}")
+    if destination.exists() or destination.is_symlink():
+        raise FileExistsError(f"Destination already exists: {destination}")
+    if not destination.parent.is_dir():
+        raise FileNotFoundError(f"Destination folder is unavailable: {destination.parent}")
+
+    try:
+        os.link(source, destination)
+    except FileExistsError:
+        raise
+    except OSError as error:
+        # Cross-volume links and some filesystems do not support hard links.
+        if error.errno not in {
+            errno.EXDEV,
+            errno.EPERM,
+            errno.EACCES,
+            getattr(errno, "ENOTSUP", -1),
+            getattr(errno, "EOPNOTSUPP", -1),
+        }:
+            raise
+        temporary_path: Path | None = None
+        try:
+            with NamedTemporaryFile(
+                "wb",
+                dir=destination.parent,
+                prefix=f".{destination.name}.",
+                suffix=".moving",
+                delete=False,
+            ) as temporary:
+                temporary_path = Path(temporary.name)
+                with source.open("rb") as input_file:
+                    shutil.copyfileobj(input_file, temporary, length=1024 * 1024)
+                temporary.flush()
+                os.fsync(temporary.fileno())
+            shutil.copystat(source, temporary_path, follow_symlinks=False)
+            # Publishing by hard link is atomic and still fails if a competing
+            # writer created the destination after the initial check.
+            os.link(temporary_path, destination)
+        except Exception:
+            raise
+        finally:
+            if temporary_path is not None:
+                try:
+                    temporary_path.unlink()
+                except OSError:
+                    pass
+
+    try:
+        source.unlink()
+    except Exception:
+        # Keep the operation from leaving two copies while reporting a failed move.
+        try:
+            destination.unlink()
+        except OSError:
+            pass
+        raise
 
 
 def available_destination(path: Path, marker: str = "") -> Path:
     """Return a non-existing path by appending a numeric suffix."""
     path = Path(path)
 
-    if not path.exists():
+    if not path.exists() and not path.is_symlink():
         return path
 
     original_stem = path.stem
@@ -98,6 +164,6 @@ def available_destination(path: Path, marker: str = "") -> Path:
 
     while True:
         candidate = path.parent / f"{original_stem}{marker}_{counter}{suffix}"
-        if not candidate.exists():
+        if not candidate.exists() and not candidate.is_symlink():
             return candidate
         counter += 1

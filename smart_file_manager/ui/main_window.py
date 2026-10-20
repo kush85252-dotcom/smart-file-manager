@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import (
     QApplication,
     QCheckBox,
     QComboBox,
+    QDialog,
     QFrame,
     QFileDialog,
     QHBoxLayout,
@@ -42,7 +43,16 @@ from ..config import (
     default_start_folder,
 )
 from ..logging_config import configure_logging
+from ..services.activity_history import HistoryStore, HistoryStoreError
+from ..services.custom_rules import (
+    CustomRule,
+    RuleStore,
+    RuleValidationError,
+    resolve_matching_rules,
+    rule_matches,
+)
 from ..services.file_operations import (
+    available_destination,
     delete_path,
     is_hidden,
     open_file as open_file_operation,
@@ -55,20 +65,25 @@ from ..services.folder_lists import (
     remove_favorite,
 )
 from ..services.organizer import (
-    build_organize_plan as build_organize_plan_service,
+    PlanEntry,
+    build_rule_aware_plan,
     organize_plan,
-    undo_operation,
+    preflight_history_undo,
+    undo_history_record_detailed,
 )
 from ..services.scanner import iter_files
+from ..services.smart_sense import SmartSuggestion, suggest_for_files
 from ..utils import format_size, modified_date
 from .folder_list_page import FolderListPage
 from .monitor_page import MonitorPage
+from .rule_dialog import RuleEditorDialog
 from .scan_panel import ScanPanel
 from .styles import LIGHT_STYLESHEET, STYLESHEET
 
 # Stack positions.  The first four keep their original order.
 PAGE_OVERVIEW, PAGE_FILES, PAGE_ORGANIZE, PAGE_SETTINGS = 0, 1, 2, 3
 PAGE_FAVORITES, PAGE_RECENT, PAGE_MONITOR = 4, 5, 6
+PAGE_RULES, PAGE_SMART_SENSE = 7, 8
 
 
 class SFM_Lite(QMainWindow):
@@ -84,6 +99,10 @@ class SFM_Lite(QMainWindow):
         self.logger = logging.getLogger(__name__)
         self.settings_widgets = {}
         self.base_font = QFont(QApplication.font())
+        self.rule_store = RuleStore()
+        self.history_store = HistoryStore()
+        self.dismissed_suggestion_ids: set[str] = set()
+        self.smart_suggestions: list[SmartSuggestion] = []
 
         self.current_folder = default_start_folder()
 
@@ -145,6 +164,8 @@ class SFM_Lite(QMainWindow):
         self.recent_button = self.sidebar_button("🕘  Recent Folders")
         self.monitor_button = self.sidebar_button("📡  Live Monitor")
         self.settings_button = self.sidebar_button("⚙  Settings")
+        self.rules_button = self.sidebar_button("Custom Rules")
+        self.smart_sense_button = self.sidebar_button("Smart Sense")
 
         self.nav_buttons = {
             PAGE_OVERVIEW: self.dashboard_button,
@@ -154,6 +175,8 @@ class SFM_Lite(QMainWindow):
             PAGE_RECENT: self.recent_button,
             PAGE_MONITOR: self.monitor_button,
             PAGE_SETTINGS: self.settings_button,
+            PAGE_RULES: self.rules_button,
+            PAGE_SMART_SENSE: self.smart_sense_button,
         }
         for button in self.nav_buttons.values():
             sidebar_layout.addWidget(button)
@@ -181,12 +204,14 @@ class SFM_Lite(QMainWindow):
         self.favorites_page = self.create_favorites_page()
         self.recent_page = self.create_recent_page()
         self.monitor_page = MonitorPage(lambda: self.current_folder)
+        self.rules_page = self.create_rules_page()
+        self.smart_sense_page = self.create_smart_sense_page()
 
         # Order must match the PAGE_* constants above.
         for page in (
             self.dashboard_page, self.files_page, self.organize_page,
             self.settings_page, self.favorites_page, self.recent_page,
-            self.monitor_page,
+            self.monitor_page, self.rules_page, self.smart_sense_page,
         ):
             self.stack.addWidget(page)
 
@@ -201,6 +226,10 @@ class SFM_Lite(QMainWindow):
         """Switch page and mark the matching sidebar button as current."""
         if index in (PAGE_FAVORITES, PAGE_RECENT):
             self.refresh_folder_lists()  # re-check which folders still exist
+        elif index == PAGE_RULES:
+            self.refresh_rule_list()
+        elif index == PAGE_SMART_SENSE:
+            self.refresh_smart_suggestions()
         self.stack.setCurrentIndex(index)
         for page_index, button in self.nav_buttons.items():
             button.setProperty("current", page_index == index)
@@ -444,6 +473,460 @@ class SFM_Lite(QMainWindow):
 
         layout.addStretch()
         return page
+
+    def create_rules_page(self):
+        page = QWidget()
+        layout = QVBoxLayout(page)
+        layout.setContentsMargins(26, 26, 26, 26)
+        layout.setSpacing(12)
+
+        heading = QLabel("Custom Rules")
+        heading.setObjectName("heading")
+        description = QLabel(
+            "Create local rules that participate in an organization preview. "
+            "Saving or enabling a rule never moves files."
+        )
+        description.setObjectName("description")
+        layout.addWidget(heading)
+        layout.addWidget(description)
+
+        self.rule_store_status = QLabel()
+        self.rule_store_status.setObjectName("status")
+        layout.addWidget(self.rule_store_status)
+
+        self.rules_table = QTableWidget(0, 5)
+        self.rules_table.setHorizontalHeaderLabels(
+            ["Rule", "Conditions", "Destination", "Priority", "State"]
+        )
+        self.rules_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.rules_table.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        self.rules_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self.rules_table.setAlternatingRowColors(True)
+        self.rules_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
+        self.rules_table.verticalHeader().setVisible(False)
+        layout.addWidget(self.rules_table, 1)
+
+        actions = QHBoxLayout()
+        self.rule_add_button = QPushButton("Create rule")
+        self.rule_edit_button = QPushButton("Edit")
+        self.rule_toggle_button = QPushButton("Enable / disable")
+        self.rule_delete_button = QPushButton("Delete")
+        self.rule_preview_button = QPushButton("Preview matches")
+        for button in (
+            self.rule_add_button,
+            self.rule_edit_button,
+            self.rule_toggle_button,
+            self.rule_delete_button,
+            self.rule_preview_button,
+        ):
+            actions.addWidget(button)
+        self.rule_add_button.clicked.connect(self.create_custom_rule)
+        self.rule_edit_button.clicked.connect(self.edit_custom_rule)
+        self.rule_toggle_button.clicked.connect(self.toggle_custom_rule)
+        self.rule_delete_button.clicked.connect(self.delete_custom_rule)
+        self.rule_preview_button.clicked.connect(self.preview_custom_rule)
+        layout.addLayout(actions)
+        return page
+
+    def create_smart_sense_page(self):
+        page = QWidget()
+        layout = QVBoxLayout(page)
+        layout.setContentsMargins(26, 26, 26, 26)
+        layout.setSpacing(12)
+
+        heading = QLabel("Smart Sense")
+        heading.setObjectName("heading")
+        description = QLabel(
+            "Local, rule-based suggestions from file type, filename, and nearby folders. "
+            "Nothing moves unless you choose a suggestion and confirm it."
+        )
+        description.setObjectName("description")
+        layout.addWidget(heading)
+        layout.addWidget(description)
+
+        self.smart_sense_status = QLabel("Choose a folder or refresh to review suggestions.")
+        self.smart_sense_status.setObjectName("status")
+        layout.addWidget(self.smart_sense_status)
+
+        self.sense_table = QTableWidget(0, 4)
+        self.sense_table.setHorizontalHeaderLabels(
+            ["File", "Suggested destination", "Signals", "Explanation / conflicts"]
+        )
+        self.sense_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.sense_table.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        self.sense_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self.sense_table.setAlternatingRowColors(True)
+        self.sense_table.setWordWrap(True)
+        self.sense_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
+        self.sense_table.verticalHeader().setVisible(False)
+        layout.addWidget(self.sense_table, 1)
+
+        actions = QHBoxLayout()
+        self.sense_refresh_button = QPushButton("Refresh suggestions")
+        self.sense_move_button = QPushButton("Preview and move selected")
+        self.sense_dismiss_button = QPushButton("Dismiss selected")
+        self.sense_refresh_button.clicked.connect(self.refresh_smart_suggestions)
+        self.sense_move_button.clicked.connect(self.move_selected_suggestion)
+        self.sense_dismiss_button.clicked.connect(self.dismiss_selected_suggestion)
+        actions.addWidget(self.sense_refresh_button)
+        actions.addWidget(self.sense_move_button)
+        actions.addWidget(self.sense_dismiss_button)
+        actions.addStretch()
+        layout.addLayout(actions)
+        return page
+
+    # ========================================================
+    # CUSTOM RULES
+    # ========================================================
+
+    @staticmethod
+    def _condition_label(condition):
+        labels = {
+            "name_contains": "filename contains",
+            "name_starts": "filename starts with",
+            "extension": "extension matches",
+            "location_glob": "location matches",
+        }
+        return f'{labels.get(condition.kind, condition.kind)} "{condition.value}"'
+
+    def refresh_rule_list(self):
+        self.rule_store.load()
+        self.rules_table.setRowCount(0)
+        if self.rule_store.read_only_error:
+            self.rule_store_status.setText(self.rule_store.read_only_error)
+            for button in (
+                self.rule_add_button,
+                self.rule_edit_button,
+                self.rule_toggle_button,
+                self.rule_delete_button,
+            ):
+                button.setEnabled(False)
+        else:
+            status_text = (
+                "No rules yet. Rules only affect an organization after its preview is confirmed."
+                if not self.rule_store.rules
+                else f"{len(self.rule_store.rules)} saved rule(s). Lower priority numbers take precedence."
+            )
+            if self.rule_store.load_warnings:
+                status_text = "Review required: " + " ".join(self.rule_store.load_warnings)
+            self.rule_store_status.setText(status_text)
+            for button in (
+                self.rule_add_button,
+                self.rule_edit_button,
+                self.rule_toggle_button,
+                self.rule_delete_button,
+            ):
+                button.setEnabled(True)
+        self.rule_preview_button.setEnabled(bool(self.rule_store.rules))
+
+        rules = sorted(self.rule_store.rules, key=lambda rule: (rule.priority, rule.name.casefold()))
+        for row, rule in enumerate(rules):
+            self.rules_table.insertRow(row)
+            condition_text = f" {rule.logic.upper()} ".join(
+                self._condition_label(condition) for condition in rule.conditions
+            )
+            destination = (
+                rule.destination
+                if rule.destination_type == "folder"
+                else f"Category: {rule.destination}"
+            )
+            values = [
+                rule.name,
+                condition_text,
+                destination,
+                str(rule.priority),
+                "Enabled" if rule.enabled else "Disabled",
+            ]
+            for column, value in enumerate(values):
+                item = QTableWidgetItem(value)
+                if column == 0:
+                    item.setData(Qt.ItemDataRole.UserRole, rule.rule_id)
+                self.rules_table.setItem(row, column, item)
+            self.rules_table.setRowHeight(row, 42)
+
+    def _selected_custom_rule(self) -> CustomRule | None:
+        row = self.rules_table.currentRow()
+        if row < 0:
+            return None
+        item = self.rules_table.item(row, 0)
+        if item is None:
+            return None
+        rule_id = item.data(Qt.ItemDataRole.UserRole)
+        return next((rule for rule in self.rule_store.rules if rule.rule_id == rule_id), None)
+
+    def create_custom_rule(self):
+        dialog = RuleEditorDialog(self)
+        if dialog.exec() != QDialog.DialogCode.Accepted or dialog.rule is None:
+            return
+        try:
+            self.rule_store.add(dialog.rule)
+        except (OSError, RuleValidationError) as error:
+            QMessageBox.critical(self, "Could not save rule", str(error))
+            return
+        self.refresh_rule_list()
+        self.status_label.setText(f"Saved rule: {dialog.rule.name}")
+
+    def edit_custom_rule(self):
+        rule = self._selected_custom_rule()
+        if rule is None:
+            QMessageBox.information(self, "Select a rule", "Choose a rule to edit.")
+            return
+        dialog = RuleEditorDialog(self, rule)
+        if dialog.exec() != QDialog.DialogCode.Accepted or dialog.rule is None:
+            return
+        try:
+            self.rule_store.update(dialog.rule)
+        except (OSError, RuleValidationError) as error:
+            QMessageBox.critical(self, "Could not save rule", str(error))
+            return
+        self.refresh_rule_list()
+        self.status_label.setText(f"Updated rule: {dialog.rule.name}")
+
+    def toggle_custom_rule(self):
+        rule = self._selected_custom_rule()
+        if rule is None:
+            QMessageBox.information(self, "Select a rule", "Choose a rule to enable or disable.")
+            return
+        try:
+            self.rule_store.set_enabled(rule.rule_id, not rule.enabled)
+        except (OSError, RuleValidationError) as error:
+            QMessageBox.critical(self, "Could not update rule", str(error))
+            return
+        self.refresh_rule_list()
+
+    def delete_custom_rule(self):
+        rule = self._selected_custom_rule()
+        if rule is None:
+            QMessageBox.information(self, "Select a rule", "Choose a rule to delete.")
+            return
+        answer = QMessageBox.question(
+            self,
+            "Delete custom rule",
+            f"Delete '{rule.name}'?\n\nThis only removes the rule; it does not change any files.",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
+        )
+        if answer != QMessageBox.StandardButton.Yes:
+            return
+        try:
+            self.rule_store.delete(rule.rule_id)
+        except (OSError, RuleValidationError) as error:
+            QMessageBox.critical(self, "Could not delete rule", str(error))
+            return
+        self.refresh_rule_list()
+
+    def _current_scan_files(self) -> list[Path]:
+        if self.config.get("scan_subfolders"):
+            return list(iter_files(
+                self.current_folder,
+                include_hidden=bool(self.config.get("show_hidden_files")),
+            ))
+        return [Path(path) for path in self.files if Path(path).is_file()]
+
+    def preview_custom_rule(self):
+        rule = self._selected_custom_rule()
+        if rule is None:
+            QMessageBox.information(self, "Select a rule", "Choose a rule to preview.")
+            return
+        matches = []
+        for source in self._current_scan_files():
+            if not rule_matches(rule, source):
+                continue
+            destination_folder = (
+                self.current_folder / rule.destination
+                if rule.destination_type == "category"
+                else Path(rule.destination)
+            )
+            destination = destination_folder / source.name
+            resolution = resolve_matching_rules(self.rule_store.rules, source)
+            note = ""
+            if not rule.enabled:
+                note = "  [DISABLED: this rule is not applied during organization]"
+            elif resolution.status == "conflict" and any(
+                candidate.rule_id == rule.rule_id for candidate in resolution.competing_rules
+            ):
+                note = "  [CONFLICT: equal-priority rules disagree; no destination is selected]"
+            elif resolution.status == "matched" and resolution.rule:
+                if resolution.rule.rule_id != rule.rule_id:
+                    winner = resolution.rule
+                    winner_folder = (
+                        self.current_folder / winner.destination
+                        if winner.destination_type == "category"
+                        else Path(winner.destination)
+                    )
+                    note = (
+                        f"  [OVERRIDDEN by higher-priority rule '{winner.name}'; "
+                        f"active destination: {winner_folder / source.name}]"
+                    )
+                elif destination.exists() or destination.is_symlink():
+                    note = f"  [EXISTS: would propose {available_destination(destination)}]"
+            elif rule.destination_type == "folder" and not destination_folder.is_dir():
+                note = "  [INVALID: the configured destination folder is unavailable]"
+            elif (
+                not destination_folder.exists()
+                and not self.config.get("create_category_folders")
+            ):
+                note = "  [SKIP: destination folder creation is disabled]"
+            elif destination.exists() or destination.is_symlink():
+                note = f"  [EXISTS: would propose {available_destination(destination)}]"
+            matches.append(
+                f"{source}\n  → {destination}{note}\n"
+                f"  Matched rule: {rule.name}; {rule.logic.upper()} conditions."
+            )
+        if not matches:
+            text = f"No files in the current scan match '{rule.name}'."
+        else:
+            text = "\n\n".join(matches[:25])
+            if len(matches) > 25:
+                text += f"\n\n…and {len(matches) - 25} more match(es)."
+        QMessageBox.information(self, f"Rule preview: {rule.name}", text)
+
+    # ========================================================
+    # SMART SENSE
+    # ========================================================
+
+    def refresh_smart_suggestions(self):
+        try:
+            suggestions = suggest_for_files(self._current_scan_files(), self.current_folder)
+        except OSError as error:
+            self.smart_sense_status.setText(f"Could not scan this folder: {error}")
+            return
+        self.smart_suggestions = [
+            suggestion
+            for suggestion in suggestions
+            if suggestion.suggestion_id not in self.dismissed_suggestion_ids
+        ]
+        self.sense_table.setRowCount(0)
+        for row, suggestion in enumerate(self.smart_suggestions):
+            self.sense_table.insertRow(row)
+            values = [
+                str(suggestion.source),
+                str(suggestion.destination) if suggestion.destination else "Needs review",
+                "; ".join(suggestion.signals) or "No matching signal",
+                " ".join((suggestion.explanation, *suggestion.conflicts)),
+            ]
+            for column, value in enumerate(values):
+                item = QTableWidgetItem(value)
+                if column == 0:
+                    item.setData(Qt.ItemDataRole.UserRole, suggestion.suggestion_id)
+                self.sense_table.setItem(row, column, item)
+            self.sense_table.setRowHeight(row, 72)
+        if not self.smart_suggestions:
+            self.smart_sense_status.setText("No suggestions for the current folder.")
+        else:
+            actionable = sum(suggestion.actionable for suggestion in self.smart_suggestions)
+            self.smart_sense_status.setText(
+                f"{len(self.smart_suggestions)} suggestion(s); {actionable} can be reviewed for a move."
+            )
+
+    def _selected_suggestion(self) -> SmartSuggestion | None:
+        row = self.sense_table.currentRow()
+        if row < 0:
+            return None
+        item = self.sense_table.item(row, 0)
+        if item is None:
+            return None
+        suggestion_id = item.data(Qt.ItemDataRole.UserRole)
+        return next(
+            (suggestion for suggestion in self.smart_suggestions
+             if suggestion.suggestion_id == suggestion_id),
+            None,
+        )
+
+    def dismiss_selected_suggestion(self):
+        suggestion = self._selected_suggestion()
+        if suggestion is None:
+            QMessageBox.information(self, "Select a suggestion", "Choose a suggestion to dismiss.")
+            return
+        self.dismissed_suggestion_ids.add(suggestion.suggestion_id)
+        self.refresh_smart_suggestions()
+        self.smart_sense_status.setText("Suggestion dismissed for this session.")
+
+    def move_selected_suggestion(self):
+        suggestion = self._selected_suggestion()
+        if suggestion is None:
+            QMessageBox.information(self, "Select a suggestion", "Choose a suggestion to review.")
+            return
+        if not suggestion.actionable:
+            QMessageBox.warning(
+                self,
+                "Suggestion needs review",
+                "\n".join(suggestion.conflicts) or "No safe destination is available.",
+            )
+            return
+        if not suggestion.source.is_file():
+            QMessageBox.warning(self, "File unavailable", "The source file is no longer available.")
+            self.refresh_smart_suggestions()
+            return
+
+        destination = suggestion.destination
+        warning = ""
+        if destination.exists() or destination.is_symlink():
+            prior = destination
+            destination = available_destination(destination)
+            warning = (
+                f"\n\nThe suggested destination already exists. To avoid overwriting it, "
+                f"the file would be saved as:\n{destination}"
+            )
+        prompt = (
+            f"Source:\n{suggestion.source}\n\n"
+            f"Suggested destination:\n{destination}\n\n"
+            f"Reason: {suggestion.explanation}"
+            + (f"\n\nReview: {'; '.join(suggestion.conflicts)}" if suggestion.conflicts else "")
+            + warning
+            + "\n\nMove this file now?"
+        )
+        answer = QMessageBox.question(
+            self,
+            "Confirm Smart Sense move",
+            prompt,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
+        )
+        if answer != QMessageBox.StandardButton.Yes:
+            return
+
+        execution_errors = []
+        moved = organize_plan(
+            [(suggestion.source, destination.parent, destination)],
+            error_callback=execution_errors.append,
+        )
+        if not moved:
+            QMessageBox.warning(
+                self,
+                "File was not moved",
+                "\n".join(execution_errors)
+                or "The file or destination changed after preview. Refresh suggestions and review again.",
+            )
+            self.refresh_smart_suggestions()
+            return
+        history_error = None
+        if self.config.get("keep_undo_history"):
+            try:
+                self.history_store.append(
+                    "smart_sense",
+                    moved,
+                    related_suggestion_ids=[suggestion.suggestion_id],
+                )
+            except (OSError, HistoryStoreError) as error:
+                history_error = str(error)
+                QMessageBox.warning(
+                    self,
+                    "Move completed; history was not saved",
+                    f"The file moved, but persistent Undo could not be recorded:\n{history_error}",
+                )
+        self.dismissed_suggestion_ids.add(suggestion.suggestion_id)
+        self.refresh()
+        self.refresh_smart_suggestions()
+        completion_message = f"Moved {suggestion.source.name}."
+        if history_error:
+            self.status_label.setText(completion_message)
+        else:
+            self.notify_operation("Smart Sense Move Complete", completion_message)
 
     # ========================================================
     # SETTINGS
@@ -1104,21 +1587,23 @@ class SFM_Lite(QMainWindow):
         self.category_label.setText(category_text)
 
     def build_organize_plan(self):
-        files = self.files
-        if self.config.get("scan_subfolders"):
-            # iter_files never follows directory symlinks/junctions and skips
-            # unreadable folders instead of failing.
-            files = list(iter_files(
-                self.current_folder,
-                include_hidden=bool(self.config.get("show_hidden_files")),
-            ))
-        return build_organize_plan_service(
-            files,
+        return build_rule_aware_plan(
+            self._current_scan_files(),
             self.current_folder,
             self.config.get("organization_mode"),
+            self.rule_store.rules,
+            create_category_folders=bool(self.config.get("create_category_folders")),
         )
 
     def organize_files(self):
+        if self.rule_store.read_only_error or self.rule_store.load_warnings:
+            QMessageBox.warning(
+                self,
+                "Custom rules need review",
+                self.rule_store.read_only_error
+                or "One or more saved rules could not be loaded. Review the Rules page before organizing so no saved rule is ignored.",
+            )
+            return
         plan = self.build_organize_plan()
 
         if not plan:
@@ -1129,71 +1614,157 @@ class SFM_Lite(QMainWindow):
             )
             return
 
+        blocking = [entry for entry in plan if entry.issue]
         preview_lines = []
-        for source, folder, destination in plan[:15]:
-            preview_lines.append(f"{source.name}  →  {folder.name}/")
+        for entry in plan[:15]:
+            if entry.issue:
+                preview_lines.append(
+                    f"REVIEW REQUIRED\n{entry.source}\n  {entry.issue}"
+                )
+                continue
+            preview_lines.append(
+                f"{entry.source}\n  → {entry.destination}\n"
+                f"  Reason: {entry.reason}"
+            )
+            if entry.warning:
+                preview_lines.append(f"  Conflict: {entry.warning}")
 
         if len(plan) > 15:
             preview_lines.append(f"\n...and {len(plan) - 15} more.")
 
         preview = "\n".join(preview_lines)
+        if blocking:
+            QMessageBox.warning(
+                self,
+                "Review organization rules",
+                "No files were moved. Resolve these rule or path conflicts, then preview again:\n\n"
+                + preview,
+            )
+            return
+
         needs_prompt = (
             self.config.get("preview_before_apply")
             or self.config.get("confirm_before_organizing")
+            or any(entry.rule_id for entry in plan)
         )
         if needs_prompt:
-            title = (
-                "Preview Organization"
-                if self.config.get("preview_before_apply")
-                else "Confirm Organization"
-            )
-            prompt = (
-                f"These files will be organized:\n\n{preview}\n\n"
-                f"Apply this operation?"
-                if self.config.get("preview_before_apply")
-                else f"Organize {len(plan)} files now?"
-            )
+            title = "Preview Organization" if self.config.get("preview_before_apply") else "Confirm Organization"
+            prompt = f"Review the source, reason, and proposed destination for each file:\n\n{preview}\n\nApply this operation?"
             answer = QMessageBox.question(
                 self,
                 title,
                 prompt,
                 QMessageBox.StandardButton.Yes |
-                QMessageBox.StandardButton.No
+                QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No,
             )
             if answer != QMessageBox.StandardButton.Yes:
                 return
 
         self.progress.setValue(0)
+        execution_errors = []
         moved_files = organize_plan(
-            plan,
+            [
+                (entry.source, entry.destination_folder, entry.destination)
+                for entry in plan
+                if entry.destination_folder is not None and entry.destination is not None
+            ],
             progress_callback=self.progress.setValue,
             create_category_folders=self.config.get("create_category_folders"),
+            error_callback=execution_errors.append,
         )
 
+        history_error = None
         if moved_files and self.config.get("keep_undo_history"):
-            self.undo_history.append(moved_files)
+            try:
+                operation_type = "custom_rule" if any(entry.rule_id for entry in plan) else "organization"
+                self.history_store.append(
+                    operation_type,
+                    moved_files,
+                    result="completed" if len(moved_files) == len(plan) else "partial",
+                    related_rule_ids=[
+                        entry.rule_id for entry in plan if entry.rule_id is not None
+                    ],
+                )
+            except (OSError, HistoryStoreError) as error:
+                history_error = str(error)
         self.logger.info("Organized %d files in %s.", len(moved_files), self.current_folder)
 
         self.refresh()
 
-        self.notify_operation(
-            "Organization Complete",
-            f"Moved {len(moved_files)} files.\n\n"
-            "You can use Undo to reverse this operation.",
-        )
+        message = f"Moved {len(moved_files)} file(s)."
+        if self.config.get("keep_undo_history") and not history_error and moved_files:
+            message += "\n\nUndo is available from the Organize page."
+        if history_error:
+            message += f"\n\nThe move completed, but persistent Undo could not be saved:\n{history_error}"
+        self.status_label.setText(message.split("\n", 1)[0])
+        if execution_errors or history_error:
+            if execution_errors:
+                message += "\n\nFiles not moved:\n" + "\n".join(execution_errors[:10])
+                if len(execution_errors) > 10:
+                    message += f"\n…and {len(execution_errors) - 10} more."
+            QMessageBox.warning(self, "Organization completed with warnings", message)
+        elif self.config.get("show_notifications"):
+            QMessageBox.information(self, "Organization Complete", message)
 
     def undo_last(self):
-        if not self.undo_history:
+        self.history_store.load()
+        if self.history_store.read_only_error:
+            QMessageBox.warning(self, "Undo unavailable", self.history_store.read_only_error)
+            return
+        operation = self.history_store.last_undoable()
+        if operation is None:
             QMessageBox.information(
                 self,
                 "Nothing to undo",
-                "There is no organization operation to undo."
+                "There is no saved file operation that can currently be undone."
             )
             return
 
-        operation = self.undo_history.pop()
-        restored = undo_operation(operation)
-        self.logger.info("Undid organization and restored %d files.", restored)
+        problem = preflight_history_undo(operation)
+        if problem:
+            try:
+                self.history_store.record_undo_error(operation["operation_id"], problem)
+            except (OSError, HistoryStoreError):
+                self.logger.exception("Could not update the activity history after failed Undo.")
+            QMessageBox.warning(self, "Undo stopped", problem)
+            return
+
+        move_count = sum(
+            move.get("result") == "moved" and not move.get("reversed")
+            for move in operation["moves"]
+        )
+        answer = QMessageBox.question(
+            self,
+            "Confirm Undo",
+            f"Restore {move_count} file(s) to their original locations?\n\n"
+            "Undo will stop rather than overwrite a file or use a different path.",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
+        )
+        if answer != QMessageBox.StandardButton.Yes:
+            return
+
+        result = undo_history_record_detailed(operation)
+        if not result.success:
+            try:
+                self.history_store.record_undo_error(
+                    operation["operation_id"], result.message
+                )
+            except (OSError, HistoryStoreError):
+                self.logger.exception("Could not update the activity history after failed Undo.")
+            QMessageBox.warning(self, "Undo stopped", result.message)
+            return
+        try:
+            self.history_store.mark_reversed(operation["operation_id"])
+        except (OSError, HistoryStoreError) as error:
+            QMessageBox.warning(
+                self,
+                "Undo completed; history update failed",
+                f"Files were restored, but their history status could not be saved:\n{error}",
+            )
+        restored = result.restored
+        self.logger.info("Undid operation and restored %d files.", restored)
         self.refresh()
 
         self.notify_operation("Undo Complete", f"Restored {restored} files.")

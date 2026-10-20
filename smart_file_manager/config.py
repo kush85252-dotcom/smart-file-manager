@@ -14,8 +14,9 @@ from tempfile import NamedTemporaryFile
 from typing import Any
 
 APP_NAME = "Smart File Manager"
-VERSION = "2.1"
+VERSION = "2.2.0"
 GITHUB_URL = "https://github.com/"
+SETTINGS_SCHEMA_VERSION = 2
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +26,7 @@ RECENT_LIMIT_CHOICES = (10, 20, 50, 100)
 DEFAULT_RECENT_LIMIT = 20
 
 DEFAULT_SETTINGS: dict[str, Any] = {
+    "schema_version": SETTINGS_SCHEMA_VERSION,
     "start_with_windows": False,
     "show_hidden_files": False,
     "confirm_before_organizing": True,
@@ -94,6 +96,16 @@ def settings_path() -> Path:
 
 def activity_log_path() -> Path:
     return settings_directory() / "activity.log"
+
+
+def custom_rules_path() -> Path:
+    """Return the versioned custom-rule document in the per-user data folder."""
+    return settings_directory() / "custom_rules.json"
+
+
+def activity_history_path() -> Path:
+    """Return persistent undo-capable operation history (separate from text logs)."""
+    return settings_directory() / "activity_history.json"
 
 
 def _clean_path_list(value: object, limit: int) -> list[str]:
