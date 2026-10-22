@@ -6,7 +6,7 @@
 [![GitHub Issues](https://img.shields.io/github/issues/kush85252-dotcom/smart-file-manager)](https://github.com/kush85252-dotcom/smart-file-manager/issues)
 [![Last Commit](https://img.shields.io/github/last-commit/kush85252-dotcom/smart-file-manager?branch=smart-file-manager-main)](https://github.com/kush85252-dotcom/smart-file-manager/commits/smart-file-manager-main)
 [![Platform](https://img.shields.io/badge/platform-Windows-0078D4?logo=windows)](https://github.com/kush85252-dotcom/smart-file-manager)
-[![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.14-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 
 A local-first file manager and organizer for Windows, built with Python and PyQt6.
 
