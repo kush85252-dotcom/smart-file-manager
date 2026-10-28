@@ -408,9 +408,3 @@ Smart File Manager is distributed under the [MIT License](LICENSE).
 - [Open Issues](https://github.com/kush85252-dotcom/smart-file-manager/issues)
 - [Changelog](changelog.md)
 - [License](LICENSE)
-
-- [Latest Releases](https://github.com/kush85252-dotcom/smart-file-manager/releases)
-- [Report a Bug](https://github.com/kush85252-dotcom/smart-file-manager/issues/new)
-- [Open Issues](https://github.com/kush85252-dotcom/smart-file-manager/issues)
-- [Changelog](changelog.md)
-- [License](LICENSE)
