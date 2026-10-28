@@ -68,6 +68,11 @@ Actual categorization depends on the extensions and rules supported by the appli
 - Review available activity information.
 - Use the available fast-scan and full-scan modes.
 
+## Screenshots
+<img width="1920" height="1034" alt="screenshot1" src="https://github.com/user-attachments/assets/ebb2f550-118c-4209-8482-4ae2a4f8ff4b" />
+
+<img width="1919" height="1034" alt="screenshot 2" src="https://github.com/user-attachments/assets/5ebd1e7e-0caa-4b10-bbef-31c3a0304aa7" />
+
 ### Settings and Organization
 
 - Light and dark themes.
