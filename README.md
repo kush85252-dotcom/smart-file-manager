@@ -349,7 +349,7 @@ python -m pip install -r requirements.txt
 Launch the application from the repository root:
 
 ```powershell
-python -m smart_file_manager
+python main.py
 ```
 
 If PowerShell blocks virtual-environment activation, you can use the environment's Python executable directly:
