@@ -1,6 +1,6 @@
 # Smart File Manager
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/kush85252-dotcom/smart-file-manager)
+[![DeepWiki](https://img.shields.io/badge/DeepWiki-Documentation-blue?logo=readthedocs)](https://deepwiki.com/kush85252-dotcom/smart-file-manager)
 [![Latest Release](https://img.shields.io/github/v/release/kush85252-dotcom/smart-file-manager?display_name=tag&label=latest%20release)](https://github.com/kush85252-dotcom/smart-file-manager/releases)
 [![License](https://img.shields.io/github/license/kush85252-dotcom/smart-file-manager)](https://github.com/kush85252-dotcom/smart-file-manager/blob/main/LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/kush85252-dotcom/smart-file-manager?style=flat)](https://github.com/kush85252-dotcom/smart-file-manager/stargazers)
